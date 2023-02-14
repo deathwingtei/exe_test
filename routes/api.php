@@ -15,12 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 // List User
-Route::get('/accounts', [App\Http\Controllers\UserController::class, 'show']);
+Route::get('/accounts', [App\Http\Controllers\AccountController::class, 'show']);
 //single Users
-Route::get('/account/{id}', [App\Http\Controllers\UserController::class, 'edit']);
+Route::get('/account/{id}', [App\Http\Controllers\AccountController::class, 'edit']);
 //create new User
-Route::post('/account', [App\Http\Controllers\UserController::class, 'store']);
+Route::post('/account', [App\Http\Controllers\AccountController::class, 'store']);
 //update User
-Route::post('/account/{id}', [App\Http\Controllers\UserController::class, 'update']);
+Route::post('/account/{id}', [App\Http\Controllers\AccountController::class, 'update']);
 //delete User
-Route::delete('/account/{id}', [App\Http\Controllers\UserController::class, 'destroy']);
+Route::delete('/account/{id}', [App\Http\Controllers\AccountController::class, 'destroy']);

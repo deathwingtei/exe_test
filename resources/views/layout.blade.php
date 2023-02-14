@@ -23,7 +23,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/users">User</a>
+                        <a class="nav-link" href="/accounts">Account</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/random">Random</a>
