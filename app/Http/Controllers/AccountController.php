@@ -17,7 +17,7 @@ class AccountController extends Controller
     public function index()
     {
         //
-        $accounts = Account::all();
+        $accounts = Account::whereNull('deleted_at')->skip(0)->take(10)->get();
         return view('accounts',compact('accounts'));
     }
 
@@ -45,7 +45,7 @@ class AccountController extends Controller
                 'username'=>$request->username,
                 'company'=>$request->company,
                 'nationality'=>$request->nationality,
-                'update_date'=>date("Y-m-d H:i:s"),
+                'updated_at'=>date("Y-m-d H:i:s"),
             ];
 
             if($request->password!="")
@@ -78,8 +78,8 @@ class AccountController extends Controller
             //     'password' => Hash::make($request->password),
             //     'company'=>$request->company,
             //     'nationality'=>$request->nationality,
-            //     'created_date' => date("Y-m-d H:i:s"),
-            //     'update_date' => date("Y-m-d H:i:s")
+            //     'created_at' => date("Y-m-d H:i:s"),
+            //     'updated_at' => date("Y-m-d H:i:s")
             // );
             // DB::table('accounts')->insert($data);
 
@@ -89,7 +89,7 @@ class AccountController extends Controller
             $account->phone = $request->phone;
             $account->email = $request->email;
             $account->username = $request->username;
-            $account->password = $request->password;
+            $account->password = Hash::make($request->password);
             $account->company = $request->company;
             $account->nationality = $request->nationality;
 
@@ -138,24 +138,20 @@ class AccountController extends Controller
             exit;
         }
 
-        $instdata = array(
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'username' => $request->username,
-            'password' => Hash::make($request->password),
-            'company'=>$request->company,
-            'nationality'=>$request->nationality,
-            'created_date' => date("Y-m-d H:i:s"),
-            'update_date' => date("Y-m-d H:i:s")
-        );
-        $save = DB::table('accounts')->insert($instdata);
+        $account = new Account;
+        $account->name = $request->name;
+        $account->phone = $request->phone;
+        $account->email = $request->email;
+        $account->username = $request->username;
+        $account->password = Hash::make($request->password);
+        $account->company = $request->company;
+        $account->nationality = $request->nationality;
 
-        if($save)
+        if($account->save())
         {
             $data['status'] = 201;
             $data['message'] = "Insert Complete";
-            $data['account'] = $instdata;
+            $data['account'] = $account;
         }
         else
         {
@@ -175,7 +171,8 @@ class AccountController extends Controller
     public function show(Account $account)
     {
         //
-        $accounts = DB::table('accounts')->select('id','username','name','phone','email','company','nationality','created_date','update_date')->get();
+        // $accounts = DB::table('accounts')->select('id','username','name','phone','email','company','nationality','created_at','updated_at')->get();
+        $accounts = Account::select('id','username','name','phone','email','company','nationality','created_at','updated_at')->whereNull('deleted_at')->skip(0)->take(10)->get();
         foreach ($accounts as $key => $value) {
             $accounts[$key]->enc_id = base64_encode($value->id."dgtei");
         }
@@ -244,7 +241,7 @@ class AccountController extends Controller
                 'username'=>$request->username,
                 'nationality' =>$request->nationality,
                 'company'=>$request->company,
-                'update_date'=>date("Y-m-d H:i:s"),
+                'updated_at'=>date("Y-m-d H:i:s"),
             ];
             if($request->password!="")
             {
@@ -286,10 +283,12 @@ class AccountController extends Controller
     public function destroy($id)
     {
         $decode_id = str_replace("dgtei","",base64_decode($id));
-        $delete =  DB::table('accounts')->where('id', $decode_id)->delete();
-
+        // permanently delete
+        // $delete =  DB::table('accounts')->where('id', $decode_id)->delete();
+        // soft delete by  Eloquent
+        $delete = Account::find($decode_id)->delete();
         $data['status'] = 200;
-        $data['message'] = "Sccount Delete";
+        $data['message'] = "Account Delete";
         $data['account'] = $delete;
 
         return response()->json($data);

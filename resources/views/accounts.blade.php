@@ -200,10 +200,13 @@
                                 <tr>
                                     <th scope="row">{{$i}}</th>
                                     <td>{{$account->name}}</td>
-                                    <td>{{$account->username}}</td>
+                                    <td>{{$account->phone}}</td>
                                     <td>{{$account->email}}</td>
-                                    <td>{{$account->created_date}}</td>
-                                    <td>{{$account->update_date}}</td>
+                                    <td>{{$account->username}}</td>
+                                    <td>{{$account->company}}</td>
+                                    <td>{{$account->nationality}}</td>
+                                    <td>{{$account->created_at}}</td>
+                                    <td>{{$account->updated_at}}</td>
                                     <th><a style="cursor:pointer;" class="text-primary edit_account" data-id="{{$account->id}}">Edit</a></th>
                                     <th><a onclick="return confirm('Are you sure you want to delete this item?');" href="{{url('account/softdelete/'.$account->id)}}" class="text-danger delete_account">Delete</a></th>
                                 </tr>
@@ -219,7 +222,7 @@
 </div>
 <script>
     
-    fetchdata()
+    fetchdata();
 
     var selection = document.querySelector('.alert') !== null;
     if (selection) {
@@ -248,7 +251,7 @@
             let txt = "";
             data.accounts.forEach(function(account){
                 txt = "<tr><td>"+c+"</td><td>"+account.name+"</td><td>"+account.phone+"</td><td>"+account.email+"</td><td>"+account.username+"</td>";
-                txt += "<td>"+account.company+"</td><td>"+account.nationality+"</td><td>"+account.created_date+"</td><td>"+account.update_date+"</td>";
+                txt += "<td>"+account.company+"</td><td>"+account.nationality+"</td><td>"+account.created_at+"</td><td>"+account.updated_at+"</td>";
                 txt += '<td><a style="cursor:pointer;" class="text-primary edit_account" data-id="'+account.enc_id+'">Edit</a></td>';
                 txt += '<td><a style="cursor:pointer;" data-id="'+account.enc_id+'" class="text-danger delete_user">Delete</a></td>';
                 txt += "</tr>";
