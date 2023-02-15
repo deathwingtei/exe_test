@@ -86,6 +86,23 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-3 text-end">
+                                    <label for="confirm_password" class="form-label ">Confirm Password</label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" value="">
+                                </div>
+                                <div class="col-3 text-end">
+                                    @error('confirm_password')
+                                        <div class=" text-center">
+                                            <span class="text-danger">{{$message}}</span>
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="mb-3">
                             <div class="row">
@@ -105,23 +122,6 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <div class="row">
-                                <div class="col-3 text-end">
-                                    <label for="confirm_password" class="form-label ">Confirm Password</label>
-                                </div>
-                                <div class="col-6">
-                                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" value="">
-                                </div>
-                                <div class="col-3 text-end">
-                                    @error('confirm_password')
-                                        <div class=" text-center">
-                                            <span class="text-danger">{{$message}}</span>
-                                        </div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="mb-3">
                             <div class="row">
@@ -247,9 +247,9 @@
             let c = 1;
             let txt = "";
             data.accounts.forEach(function(account){
-                txt = "<tr><td>"+c+"</td><td>"+account.name+"</td><td>"+account.username+"</td><td>"+account.email+"</td>";
-                txt += "<td>"+account.created_date+"</td><td>"+account.update_date+"</td>";
-                txt += '<td><a style="cursor:pointer;" class="text-primary edit_user" data-id="'+account.enc_id+'">Edit</a></td>';
+                txt = "<tr><td>"+c+"</td><td>"+account.name+"</td><td>"+account.phone+"</td><td>"+account.email+"</td><td>"+account.username+"</td>";
+                txt += "<td>"+account.company+"</td><td>"+account.nationality+"</td><td>"+account.created_date+"</td><td>"+account.update_date+"</td>";
+                txt += '<td><a style="cursor:pointer;" class="text-primary edit_account" data-id="'+account.enc_id+'">Edit</a></td>';
                 txt += '<td><a style="cursor:pointer;" data-id="'+account.enc_id+'" class="text-danger delete_user">Delete</a></td>';
                 txt += "</tr>";
                 document.querySelector("#showdata").innerHTML += txt;
@@ -261,7 +261,9 @@
             document.getElementById("password").value = '';
             document.getElementById("confirm_password").value = '';
             document.getElementById("username").value = '';
-            document.getElementById("surname").value = '';
+            document.getElementById("phone").value = '';
+            document.getElementById("nationality").value = '';
+            document.getElementById("company").value = '';
             editbtn();
             deletebtn();
         });
@@ -277,13 +279,18 @@
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
         const confirm_password = document.getElementById("confirm_password").value;
+        const nationality = document.getElementById("nationality").value;
+        const company = document.getElementById("company").value;
+        const phone = document.getElementById("phone").value;
 
         let formdata = new FormData();
         formdata.append('id', id);
         formdata.append('name', name);
         formdata.append('email', email);
         formdata.append('username', username);
-        formdata.append('surname', surname);
+        formdata.append('phone', phone);
+        formdata.append('nationality', nationality);
+        formdata.append('company', company);
 
         if(name=="")
         {
@@ -298,6 +305,21 @@
         if(username=="")
         {
             alert("Username Must Be Fill");
+            return false;
+        }
+        if(phone=="")
+        {
+            alert("Phone Must Be Fill");
+            return false;
+        }
+        if(nationality=="")
+        {
+            alert("Nationality Must Be Fill");
+            return false;
+        }
+        if(company=="")
+        {
+            alert("Company Must Be Fill");
             return false;
         }
 
@@ -418,7 +440,9 @@
                         document.getElementById("name").value = data.account.name;
                         document.getElementById("email").value = data.account.email;
                         document.getElementById("username").value = data.account.username;
-                        document.getElementById("surname").value = data.account.surname;
+                        document.getElementById("phone").value = data.account.phone;
+                        document.getElementById("company").value = data.account.company;
+                        document.getElementById("nationality").value = data.account.nationality;
                     }
                     else
                     {
@@ -437,7 +461,7 @@
                 if (confirm("Are you sure?")) {
                     const thisid = li.getAttribute("data-id");
                 
-                    let url = 'api/user/'+thisid;
+                    let url = 'api/account/'+thisid;
                     fetch(url, {
                         method: "DELETE",
                         headers: {

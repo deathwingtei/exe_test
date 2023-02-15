@@ -175,7 +175,7 @@ class AccountController extends Controller
     public function show(Account $account)
     {
         //
-        $account = DB::table('accounts')->select('id','username','name','phone','email','company','nationality','created_date','update_date')->get();
+        $accounts = DB::table('accounts')->select('id','username','name','phone','email','company','nationality','created_date','update_date')->get();
         foreach ($accounts as $key => $value) {
             $accounts[$key]->enc_id = base64_encode($value->id."dgtei");
         }

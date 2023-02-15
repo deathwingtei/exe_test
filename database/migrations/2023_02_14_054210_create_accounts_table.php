@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('company');
             $table->string('nationality');
-            $table->datetime('created_date');
-            $table->datetime('update_date');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

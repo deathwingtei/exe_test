@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 15, 2023 at 06:10 AM
+-- Generation Time: Feb 15, 2023 at 05:51 AM
 -- Server version: 5.7.39
 -- PHP Version: 8.1.10
 
@@ -24,21 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `accounts`
+-- Table structure for table `log_data`
 --
 
-CREATE TABLE `accounts` (
+CREATE TABLE `log_data` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `company` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nationality` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL
+  `log` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `table` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -46,21 +39,19 @@ CREATE TABLE `accounts` (
 --
 
 --
--- Indexes for table `accounts`
+-- Indexes for table `log_data`
 --
-ALTER TABLE `accounts`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `accounts_email_unique` (`email`),
-  ADD UNIQUE KEY `accounts_username_unique` (`username`);
+ALTER TABLE `log_data`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `accounts`
+-- AUTO_INCREMENT for table `log_data`
 --
-ALTER TABLE `accounts`
+ALTER TABLE `log_data`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 
