@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->text('log');
             $table->string('table');
+            $table->text('commend');
             $table->datetime('created_date');
         });
     }

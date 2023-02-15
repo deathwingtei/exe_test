@@ -234,6 +234,15 @@ class AccountController extends Controller
 
         if($request->id!=""&&$request->id!=null&&$request->id!="0")
         {
+            $check_password = DB::table('accounts')->whereNull('updated_at')->where('id','=',$decode_id)->count();
+            if($check_password&&$request->password=="")
+            {
+                $data['status'] = 500;
+                $data['message'] = "Please Update Password For Hash Data";
+                $data['account'] = "";
+                return response()->json($data);
+            }
+
             $updatedata = [
                 'name'=>$request->name,
                 'phone'=>$request->phone,
@@ -283,13 +292,25 @@ class AccountController extends Controller
     public function destroy($id)
     {
         $decode_id = str_replace("dgtei","",base64_decode($id));
+
         // permanently delete
         // $delete =  DB::table('accounts')->where('id', $decode_id)->delete();
+
         // soft delete by  Eloquent
         $delete = Account::find($decode_id)->delete();
         $data['status'] = 200;
         $data['message'] = "Account Delete";
         $data['account'] = $delete;
+
+        return response()->json($data);
+    }
+
+    public function login()
+    {
+
+        $data['status'] = 200;
+        $data['message'] = "Login Success Delete";
+        $data['account'] = "";
 
         return response()->json($data);
     }

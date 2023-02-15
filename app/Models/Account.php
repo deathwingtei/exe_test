@@ -11,6 +11,16 @@ class Account extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $fillable = [
+        'name',
+        'phone',
+        'email',
+        'password',
+        'username',
+        'company',
+        'nationality',
+    ];
+
     protected function serializeDate($date)
     {
         return $date->format('Y-m-d H:i:s');

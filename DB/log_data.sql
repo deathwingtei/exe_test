@@ -31,6 +31,7 @@ CREATE TABLE `log_data` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `log` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `table` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `commend` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
