@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_datas', function (Blueprint $table) {
+        Schema::create('item_data', function (Blueprint $table) {
             $table->integer('game_item_id')->autoIncrement();
             $table->string('name');
             $table->float('chance', 10, 2);
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::table('item_datas')->insert(
+        DB::table('item_data')->insert(
             array (
                 array (
                     'name' => 'Small Potion Heal',
@@ -106,6 +106,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('item_datas');
+        Schema::dropIfExists('item_data');
     }
 };

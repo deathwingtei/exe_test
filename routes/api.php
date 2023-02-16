@@ -14,13 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// List User
+// List Accounts
 Route::get('/accounts', [App\Http\Controllers\AccountController::class, 'show']);
-//single Users
+//single Account
 Route::get('/account/{id}', [App\Http\Controllers\AccountController::class, 'edit']);
-//create new User
+//create new Account
 Route::post('/account', [App\Http\Controllers\AccountController::class, 'store']);
-//update User
+//update Account
 Route::post('/account/{id}', [App\Http\Controllers\AccountController::class, 'update']);
-//delete User
+//delete Account
 Route::delete('/account/{id}', [App\Http\Controllers\AccountController::class, 'destroy']);
+
+// Reset List Item In DB
+Route::get('/items', [App\Http\Controllers\RandomController::class, 'create']);
+// random item 100 times and return data
+Route::get('/random100timesitems', [App\Http\Controllers\RandomController::class, 'randomht']);

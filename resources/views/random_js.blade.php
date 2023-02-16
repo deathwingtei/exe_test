@@ -57,26 +57,34 @@
         ];
     }
 
+    //random item on ... (0-99) index
     function randomitem(index)
     {
         // thisrandom = Math.floor(Math.random() * items.length);
         let thisrandom = 0;
+        //random floor number 0-100
         thisrandom = Math.floor(Math.random() * randomnum);
+
+        //get item from index 0-100 by chance from item data
         let thisindex = posrandom[thisrandom];
 
         if(parseInt(items[thisindex]['stock'])>=1)
         {
+            //if stock more than 1 let  get item to list recieved
             items[thisindex]['stock'] = parseInt(items[thisindex]['stock'])-1;
             if (typeof sumitem[thisindex] !== 'undefined') {
+                //if has item recieved +1
                 sumitem[thisindex]+=1;
             }
             else
             {
+                //if not has item recieved set = 1
                 sumitem[thisindex]=1;
             }
         }
         else
         {
+            //if stock = 0 recall function
             randomitem(index);
         }
         
@@ -89,6 +97,7 @@
 
         items.forEach(function(item,index){
             for (let x = 0; x < (item.chance*100); x++) {
+                // set item chance from float to interger 0 - 100 
                 posrandom[crandom] = index;
                 crandom++;
             }
@@ -99,8 +108,11 @@
         let thisrandom = 0;
         let html="";
         for (let index = 0; index < 100; index++) {
+             // call random 0 - 100 
             randomitem(index);
         }
+
+        // print
 
         let randomdiv = document.querySelector("#show_random");
         randomdiv.innerHTML = "<h2>Item Recieved</h2>";
