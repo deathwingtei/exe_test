@@ -25,3 +25,5 @@ How to run
 run php artisan serve for watch result
 
 **if keytgen wrong let create new
+
+**if dont have jwtsecret run artisan jwt:secret

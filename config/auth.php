@@ -13,10 +13,14 @@ return [
     |
     */
 
+    // 'defaults' => [
+    //     'guard' => 'web',
+    //     'passwords' => 'accounts',
+    // ],
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'accounts',
-    ],
+     ],
 
     /*
     |--------------------------------------------------------------------------
@@ -37,8 +41,9 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver' => 'jwt',
             'provider' => 'accounts',
+            'hash' => false,
         ],
     ],
 
