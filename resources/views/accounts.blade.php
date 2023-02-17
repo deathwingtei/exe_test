@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">Input Data</div>
+                <div class="card-header">Input Data <span style="float:right;" ><button class="btn btn-info" id="resetdata">Resetdata</button></span></div>
                 <div class="card-body">
                     <form id="add_edit_account">
                         @csrf
@@ -74,7 +74,7 @@
                                     <label for="password" class="form-label ">Password</label>
                                 </div>
                                 <div class="col-6">
-                                    <input type="password" class="form-control" name="password" id="password" value="">
+                                    <input type="password" class="form-control" name="password" id="password" value="" autocomplete="off">
                                 </div>
                                 <div class="col-3 text-end">
                                     @error('password')
@@ -92,7 +92,7 @@
                                     <label for="confirm_password" class="form-label ">Confirm Password</label>
                                 </div>
                                 <div class="col-6">
-                                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" value="">
+                                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" value="" autocomplete="off">
                                 </div>
                                 <div class="col-3 text-end">
                                     @error('confirm_password')
@@ -246,7 +246,7 @@
         })
         .then(response => response.json()) 
         .then(data => {
-            console.log(data.accounts);
+            console.log(data);
             let c = 1;
             let txt = "";
             data.accounts.forEach(function(account){
@@ -270,9 +270,23 @@
             editbtn();
             deletebtn();
         });
-
-        
     }
+
+    document.querySelector('#resetdata').addEventListener('click', (event) => {
+        document.querySelector("#showdata").innerHTML = "<tr><td colspan='11' align='center'><h2>Loading...</h2></td></tr>";
+        let url = 'api/accounts/reset';
+        fetch(url, {
+            method: "GET"
+        })
+        .then(response => response.json()) 
+        .then(data => {
+            
+            console.log(data.message);
+            console.log("reset complete");
+            fetchdata();
+        });
+        
+    });
 
     document.querySelector('#add_edit_account').addEventListener('submit', (event) => {
         event.preventDefault();

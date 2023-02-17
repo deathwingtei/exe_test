@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\LogData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -105,8 +106,43 @@ class AccountController extends Controller
      */
     public function create()
     {
-        //
+        //reset data Account table
+         // get all current item and add to log
+         $accounts = Account::all();
 
+         //log access
+         $log = new LogData;
+         $log->log = json_encode($accounts,JSON_UNESCAPED_UNICODE);
+         $log->table = "accounts";
+         $log->commend = "Log Before truncate";
+         $log->save();
+ 
+         //truncate table
+         DB::table('accounts')->truncate();
+ 
+         // get resource from json starter data and add to DB
+         $savecount = 0;
+         $path = base_path().'/resources/data/data.json';
+         $jsondata = file_get_contents($path);
+         $jsondata = json_decode($jsondata,true);
+         foreach ($jsondata as $key => $value) {
+            $data = array(
+                'name' => $value['name'],
+                'phone' => $value['phone'],
+                'email' => $value['email'],
+                'username' => $value['username'],
+                'password' => $value['password'],
+                'company'=>$value['company'],
+                'nationality'=>$value['nationality']
+            );
+            DB::table('accounts')->insert($data);
+         }
+
+        $data['status'] = 201;
+        $data['message'] = "Data Reset";
+        $data['return'] = "";
+
+         return response()->json($data);
     }
 
     /**
@@ -170,16 +206,23 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
+        $page = request('page', 0);
+        $skip = $page*10;
         //
         // $accounts = DB::table('accounts')->select('id','username','name','phone','email','company','nationality','created_at','updated_at')->get();
-        $accounts = Account::select('id','username','name','phone','email','company','nationality','created_at','updated_at')->whereNull('deleted_at')->skip(0)->take(10)->get();
+        $accounts = Account::select('id','username','name','phone','email','company','nationality','created_at','updated_at')
+        ->whereNull('deleted_at')->skip($skip)->take(10)->orderBy('id', 'desc')->get();
         foreach ($accounts as $key => $value) {
             $accounts[$key]->enc_id = base64_encode($value->id."dgtei");
         }
 
+        $max_page = (sizeof($accounts));
+
         $data['status'] = 200;
         $data['message'] = "Get Accounts Complete";
         $data['accounts'] = $accounts;
+        $data['current_page'] = $page;
+        $data['max_page'] = ceil((DB::table('accounts')->whereNull('deleted_at')->count())/10);
         return response()->json($data);
     }
 

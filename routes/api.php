@@ -24,6 +24,8 @@ Route::post('/account', [App\Http\Controllers\AccountController::class, 'store']
 Route::post('/account/{id}', [App\Http\Controllers\AccountController::class, 'update']);
 //delete Account
 Route::delete('/account/{id}', [App\Http\Controllers\AccountController::class, 'destroy']);
+//reset Accounts
+Route::get('/accounts/reset', [App\Http\Controllers\AccountController::class, 'create']);
 
 // Reset List Item In DB
 Route::get('/items', [App\Http\Controllers\RandomController::class, 'create']);

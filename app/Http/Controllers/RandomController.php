@@ -23,7 +23,6 @@ class RandomController extends Controller
         $log->commend = "Log Before truncate";
         $log->save();
 
-
         //truncate table
         DB::table('item_data')->truncate();
 
