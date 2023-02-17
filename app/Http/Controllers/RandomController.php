@@ -50,7 +50,7 @@ class RandomController extends Controller
         {
             $data['status'] = 201;
             $data['message'] = "Insert Complete";
-            $data['return'] = json_encode($jsondata,JSON_UNESCAPED_UNICODE);
+            $data['return'] = $jsondata;
         }
         else
         {
@@ -97,7 +97,7 @@ class RandomController extends Controller
         //update log item recieved
         $log = new LogData;
         $log->log = json_encode($itemsummary,JSON_UNESCAPED_UNICODE);
-        $log->table = "item_data";
+        $log->table = "-";
         $log->commend = "Log Item has beed recieve";
         $log->save();
 
@@ -107,7 +107,7 @@ class RandomController extends Controller
             $return_data = array("summary" => $itemsummary,"recieve" => $itemreturn,"remaining" => $items_key_game);
             $data['status'] = 200;
             $data['message'] = "Get Data Complete";
-            $data['return'] = json_encode($return_data,JSON_UNESCAPED_UNICODE);
+            $data['return'] = $return_data;
         }
         else
         {
@@ -121,6 +121,7 @@ class RandomController extends Controller
 
     private function randomitem($index,$itemforrandom,$items_key_game,$itemsummary,$itemreturn)
     {
+        //random with 0-99 index for get item
         $itemcode = $itemforrandom[rand(0,99)];
         if($items_key_game[$itemcode]['stock']>=1)
         {
@@ -146,4 +147,6 @@ class RandomController extends Controller
         $itemreturn[$index] = $items_key_game[$itemcode]['name'];
         return array($items_key_game,$itemsummary,$itemreturn);
     }
+
+    //other logic random 0-99 and divide 100 and switch case forcheck/ item 0-12 = item 1050,13-20 = item 3315 ....
 }

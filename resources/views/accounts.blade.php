@@ -246,7 +246,7 @@
         })
         .then(response => response.json()) 
         .then(data => {
-            // console.log(data);
+            console.log(data.accounts);
             let c = 1;
             let txt = "";
             data.accounts.forEach(function(account){
