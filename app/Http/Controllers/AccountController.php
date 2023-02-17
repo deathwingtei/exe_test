@@ -206,12 +206,32 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
+        $filter = request('filter', '');
         $page = request('page', 0);
         $skip = $page*10;
         //
         // $accounts = DB::table('accounts')->select('id','username','name','phone','email','company','nationality','created_at','updated_at')->get();
-        $accounts = Account::select('id','username','name','phone','email','company','nationality','created_at','updated_at')
-        ->whereNull('deleted_at')->skip($skip)->take(10)->orderBy('id', 'desc')->get();
+        if($filter=='') {
+            $allrows = DB::table('accounts')->whereNull('deleted_at')->count();
+            $maxpage = ceil(($allrows)/10);
+            $accounts = Account::select('id','username','name','phone','email','company','nationality','created_at','updated_at')
+            ->whereNull('deleted_at')->skip($skip)->take(10)->orderBy('id', 'desc')->get();
+        }
+        else {
+            $allrows = DB::table('accounts')->whereNull('deleted_at')
+            ->orWhere('username', $filter) ->orWhere('phone', $filter)->orWhere('email', $filter)
+            ->orWhere('company', $filter)->orWhere('nationality', $filter)
+            ->count();
+            $maxpage = ceil(($allrows)/10);
+
+            $accounts = Account::select('id','username','name','phone','email','company','nationality','created_at','updated_at')
+            ->whereNull('deleted_at')
+            ->orWhere('username', $filter) ->orWhere('phone', $filter)->orWhere('email', $filter)
+            ->orWhere('company', $filter)->orWhere('nationality', $filter)
+            ->skip($skip)->take(10)->orderBy('id', 'desc')->get();
+            
+        }
+
         foreach ($accounts as $key => $value) {
             $accounts[$key]->enc_id = base64_encode($value->id."dgtei");
         }
@@ -222,7 +242,9 @@ class AccountController extends Controller
         $data['message'] = "Get Accounts Complete";
         $data['accounts'] = $accounts;
         $data['current_page'] = $page;
-        $data['max_page'] = ceil((DB::table('accounts')->whereNull('deleted_at')->count())/10);
+        $data['max_page'] = $maxpage;
+        $data['all_rows'] = $allrows;
+        $data['filter'] = $filter;
         return response()->json($data);
     }
 
