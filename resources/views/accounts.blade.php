@@ -176,7 +176,8 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">Result</div>
+                    <div class="card-header">Result<input type="hidden" id="searchpage" value="0"><br><span id="setpage">Page : </span>
+                        <span style="position: absolute;right: 20px;top:0;" ><label>Filter (Enter For Result) : </label><input type="text" class="form-control" value="" id="filter"></span></div>
                     <div class="card-body">
                         <table class="table table-dark table-striped">
                             <thead>
@@ -195,23 +196,7 @@
                                 </tr>
                             </thead>
                             <tbody id="showdata">
-                                <!-- @php($i = 1)
-                                @foreach($accounts as $account)
-                                <tr>
-                                    <th scope="row">{{$i}}</th>
-                                    <td>{{$account->name}}</td>
-                                    <td>{{$account->phone}}</td>
-                                    <td>{{$account->email}}</td>
-                                    <td>{{$account->username}}</td>
-                                    <td>{{$account->company}}</td>
-                                    <td>{{$account->nationality}}</td>
-                                    <td>{{$account->created_at}}</td>
-                                    <td>{{$account->updated_at}}</td>
-                                    <th><a style="cursor:pointer;" class="text-primary edit_account" data-id="{{$account->id}}">Edit</a></th>
-                                    <th><a onclick="return confirm('Are you sure you want to delete this item?');" href="{{url('account/softdelete/'.$account->id)}}" class="text-danger delete_account">Delete</a></th>
-                                </tr>
-                                @php($i++)
-                                @endforeach -->
+
                             </tbody>
                         </table>
                     </div>
@@ -237,17 +222,27 @@
         }, 1000);
     }
 
+    document.querySelector('#filter').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            document.querySelector("#searchpage").value = 0;
+            fetchdata();
+            return false;
+        }
+    });
+
     function fetchdata()
     {
         document.querySelector("#showdata").innerHTML = "";
-        let url = 'api/accounts';
+        let filter = document.querySelector("#filter").value;
+        let page = document.querySelector("#searchpage").value;
+        let url = 'api/accounts?filter='+filter+"&page="+page;
         fetch(url, {
             method: "GET"
         })
         .then(response => response.json()) 
         .then(data => {
             console.log(data);
-            let c = 1;
+            let c = (parseInt(data.current_page)*10)+1;
             let txt = "";
             data.accounts.forEach(function(account){
                 txt = "<tr><td>"+c+"</td><td>"+account.name+"</td><td>"+account.phone+"</td><td>"+account.email+"</td><td>"+account.username+"</td>";
@@ -269,6 +264,7 @@
             document.getElementById("company").value = '';
             editbtn();
             deletebtn();
+            pagebtn(data.current_page,data.max_page);
         });
     }
 
@@ -501,6 +497,30 @@
                     });
                 }
 
+            });
+        });
+    }
+
+    function pagebtn(current_page,maxpage){
+        let pagesetup = "Page : ";
+        for (let index = 0; index < maxpage; index++) {
+            if(index==current_page)
+            {
+                pagesetup += parseInt(index)+1+" ";
+            }
+            else
+            {
+                pagesetup += "<a style='cursor:pointer;' class='changepage' data-page="+index+">"+(parseInt(index)+1)+"</a> ";
+            }
+        }
+        document.querySelector("#setpage").innerHTML = pagesetup;
+
+        document.querySelectorAll('.changepage').forEach((li) => { 
+            li.addEventListener('click', (event) => {
+                event.preventDefault();
+                const thispage = li.getAttribute("data-page");
+                document.querySelector("#searchpage").value = thispage;
+                fetchdata();
             });
         });
     }

@@ -17,7 +17,9 @@ Route::get('/', function () {
     return view('menu');
 });
 
-Route::get('/accounts', [App\Http\Controllers\AccountController::class, 'index']);
+Route::get('/accounts', function () {
+    return view('accounts');
+});
 Route::post('/accounts/update', [App\Http\Controllers\AccountController::class,'store'])->name('updateUser');
 
 Route::get('/random', function () {

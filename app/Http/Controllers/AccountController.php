@@ -11,95 +11,6 @@ use Illuminate\Support\Facades\Hash;
 class AccountController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-        $accounts = Account::whereNull('deleted_at')->skip(0)->take(10)->get();
-        return view('accounts',compact('accounts'));
-    }
-
-    //laravel Set not use
-    public function account_update(Request $request)
-    {
-        // validate value
-        if($request->id!=""&&$request->id!=null&&$request->id!="0")
-        {
-            // validate value
-            $request->validate(
-                ['name' =>'required','email' =>'required','username' =>'required','phone' =>'required','company' =>'required','nationality' =>'required']
-                ,['name.required' => 'Please Insert Name','email.required' => 'Please Insert Email'
-                ,'username.required' => 'Please Insert Username','phone.required' => 'Please Insert Phone'
-                ,'company.required' => 'Please Insert Company','nationality.required' => 'Please Insert Nationality']
-            );
-
-            $decode_id = str_replace("dgtei","",base64_decode($request->id));
-
-            //Query Builder
-            $updatedata = [
-                'name'=>$request->name,
-                'phone'=>$request->phone,
-                'email'=>$request->email,
-                'username'=>$request->username,
-                'company'=>$request->company,
-                'nationality'=>$request->nationality,
-                'updated_at'=>date("Y-m-d H:i:s"),
-            ];
-
-            if($request->password!="")
-            {
-                $updatedata['password'] = Hash::make($request->password);
-            }
-
-            $update = DB::table('accounts')->where('id', $decode_id)->update($updatedata);
-
-
-            return redirect()->route('accounts')->with('success','Form Edited');
-        }
-        else
-        {
-            // validate value
-            $request->validate(
-                ['name' =>'required','email' =>'required','username' =>'required','phone' =>'required','company' =>'required','nationality' =>'required','password' =>'required']
-                ,['name.required' => 'Please Insert Name','email.required' => 'Please Insert Email'
-                ,'username.required' => 'Please Insert Username','phone.required' => 'Please Insert Phone','password.required' => 'Please Insert Password'
-                ,'company.required' => 'Please Insert Company','nationality.required' => 'Please Insert Nationality']
-            );
-
-            // store to account DB
-
-            // $data = array(
-            //     'name' => $request->name,
-            //     'phone' => $request->phone,
-            //     'email' => $request->email,
-            //     'username' => $request->username,
-            //     'password' => Hash::make($request->password),
-            //     'company'=>$request->company,
-            //     'nationality'=>$request->nationality,
-            //     'created_at' => date("Y-m-d H:i:s"),
-            //     'updated_at' => date("Y-m-d H:i:s")
-            // );
-            // DB::table('accounts')->insert($data);
-
-            // Eloquent
-            $account = new Account;
-            $account->name = $request->name;
-            $account->phone = $request->phone;
-            $account->email = $request->email;
-            $account->username = $request->username;
-            $account->password = Hash::make($request->password);
-            $account->company = $request->company;
-            $account->nationality = $request->nationality;
-
-            $account->save();
-        }
-        return redirect()->back()->with('success','Form Added');
-    }
-    
-    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -210,7 +121,6 @@ class AccountController extends Controller
         $page = request('page', 0);
         $skip = $page*10;
         //
-        // $accounts = DB::table('accounts')->select('id','username','name','phone','email','company','nationality','created_at','updated_at')->get();
         if($filter=='') {
             $allrows = DB::table('accounts')->whereNull('deleted_at')->count();
             $maxpage = ceil(($allrows)/10);
@@ -218,18 +128,15 @@ class AccountController extends Controller
             ->whereNull('deleted_at')->skip($skip)->take(10)->orderBy('id', 'desc')->get();
         }
         else {
-            $allrows = DB::table('accounts')->whereNull('deleted_at')
-            ->orWhere('username', $filter) ->orWhere('phone', $filter)->orWhere('email', $filter)
-            ->orWhere('company', $filter)->orWhere('nationality', $filter)
+            $allrows = DB::table('accounts')->whereNull('deleted_at')->whereRaw('username = ? or phone like ? or email like ? or company like ? or nationality like ?', 
+            ["%{$filter}%","%{$filter}%","%{$filter}%","%{$filter}%","%{$filter}%"])
             ->count();
             $maxpage = ceil(($allrows)/10);
 
             $accounts = Account::select('id','username','name','phone','email','company','nationality','created_at','updated_at')
-            ->whereNull('deleted_at')
-            ->orWhere('username', $filter) ->orWhere('phone', $filter)->orWhere('email', $filter)
-            ->orWhere('company', $filter)->orWhere('nationality', $filter)
+            ->whereNull('deleted_at')->whereRaw('username = ? or phone like ? or email like ? or company like ? or nationality like ?', 
+            ["%{$filter}%","%{$filter}%","%{$filter}%","%{$filter}%","%{$filter}%"])
             ->skip($skip)->take(10)->orderBy('id', 'desc')->get();
-            
         }
 
         foreach ($accounts as $key => $value) {
