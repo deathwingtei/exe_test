@@ -1,6 +1,7 @@
 @extends('layout')
 
 @section('content')
+<input type="hidden" id="bearer" value="{{ Session::get('bearer') }}">
 <div class="container">
     <div class="row">
         <div class="col-md-12">

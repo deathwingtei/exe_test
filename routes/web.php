@@ -16,13 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('menu');
 });
-
-Route::get('/accounts', [App\Http\Controllers\AccountController::class,'accounts_page'])->name('accounts_page');
-
-
-Route::post('/accounts/update', [App\Http\Controllers\AccountController::class,'store'])->name('updateUser');
-Route::get('/login', [App\Http\Controllers\AccountController::class,'login_page'])->name('login_page');
-
+Route::group(['middleware' => ['web']], function () {
+    Route::get('/accounts', [App\Http\Controllers\AccountController::class,'accounts_page'])->name('accounts_page');
+    Route::post('/accounts/update', [App\Http\Controllers\AccountController::class,'store'])->name('updateUser');
+    Route::get('/login', [App\Http\Controllers\AccountController::class,'login_page'])->name('login_page');
+});
 Route::get('/random', function () {
     return view('random');
 });

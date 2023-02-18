@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Session;
 use Auth;
 use App\Models\Account;
 use App\Models\LogData;
@@ -26,13 +27,13 @@ class AccountController extends Controller
     public function create()
     {
         //check login
-        if(!$this->checkauthen()) {
-            $data['status'] = 203;
-            $data['message'] = "No Login Information";
+        // if(!$this->checkauthen()) {
+        //     $data['status'] = 203;
+        //     $data['message'] = "No Login Information";
     
-            return response()->json($data);
-            exit;
-        }
+        //     return response()->json($data);
+        //     exit;
+        // }
 
         //reset data Account table
          // get all current item and add to log
@@ -68,7 +69,7 @@ class AccountController extends Controller
 
         $data['status'] = 201;
         $data['message'] = "Data Reset";
-        $data['return'] = "";
+        $data['return'] = $jsondata;
 
          return response()->json($data);
     }
@@ -335,8 +336,14 @@ class AccountController extends Controller
         return response()->json($data);
     }
 
-    public function login_page(){
-        return view('login');
+    public function login_page(Request $request){
+        // print_r(Session::all());
+
+        $path = base_path().'/resources/data/data.json';
+        $jsondata = file_get_contents($path);
+        $jsondata = json_decode($jsondata,true);
+
+        return view('login')->with("datas",$jsondata);
     }
 
     public function accounts_page(){
@@ -365,9 +372,12 @@ class AccountController extends Controller
         }
         $credentials = request(['username', 'password']);
         if (!$token = auth()->guard('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            $data['status'] = 401;
+            $data['message'] = "Unauthorized / Username Or Password Incorect";
+            return response()->json($data);
         }
-
+        Session::put('bearer', $token);
+        Session::save();
         return $this->respondWithToken($token);
     }
 
@@ -401,26 +411,36 @@ class AccountController extends Controller
         }
     }
 
-    private function checkauthen()
+    public function checkauthen()
     {
         //check authen
-        if(!auth()->user())
+        if(Session::has('bearer'))
         {
-            return false;
+            return true;
         }
         else
         {
-            return true;
+            if(!auth()->user())
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 
     protected function respondWithToken($token)
     {
         //return token
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'message' => "Login Complete",
+            'status' => 200
         ]);
     }
     
