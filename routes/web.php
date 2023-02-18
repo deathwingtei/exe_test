@@ -21,6 +21,7 @@ Route::get('/accounts', function () {
     return view('accounts');
 });
 Route::post('/accounts/update', [App\Http\Controllers\AccountController::class,'store'])->name('updateUser');
+Route::post('/accounts/login', [App\Http\Controllers\AccountController::class,'login'])->name('login');
 
 Route::get('/random', function () {
     return view('random');

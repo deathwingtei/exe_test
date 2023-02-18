@@ -27,3 +27,15 @@ run php artisan serve for watch result
 **if keytgen wrong let create new
 
 **if dont have jwtsecret run artisan jwt:secret
+
+API Description
+
+1. Insert API 
+
+2. Update API 
+
+3. Delete API
+
+4. List Data API
+
+5. Login API 

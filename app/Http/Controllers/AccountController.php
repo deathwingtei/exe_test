@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\Models\Account;
 use App\Models\LogData;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
+
+    public function __construct()
+    {
+        // $this->middleware('auth:api', ['except' => ['login']]);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -277,13 +285,47 @@ class AccountController extends Controller
         return response()->json($data);
     }
 
-    public function login()
+    public function login(Request $request)
     {
 
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'username' => 'required',
+                'password' => 'required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+        $credentials = request(['username', 'password']);
+        if (!$token = auth()->guard('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+    public function logout()
+    {
+
+        auth()->logout();
+
         $data['status'] = 200;
-        $data['message'] = "Login Success Delete";
-        $data['account'] = "";
+        $data['message'] = "Successfully logged out";
 
         return response()->json($data);
     }
+
+    protected function respondWithToken($token)
+    {
+      return response()->json([
+        'access_token' => $token,
+        'token_type' => 'bearer',
+        'expires_in' => auth()->factory()->getTTL() * 60
+      ]);
+    }
+    
+
 }

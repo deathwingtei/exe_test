@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group([
+    'middleware' => 'api',
+], function ($router) {
+    Route::post('/auth/login', [App\Http\Controllers\AccountController::class, 'login']);
+    Route::post('/auth/logout', [App\Http\Controllers\AccountController::class, 'logout']);
+});
+
+
 // List Accounts
 Route::get('/accounts', [App\Http\Controllers\AccountController::class, 'show']);
 //single Account
