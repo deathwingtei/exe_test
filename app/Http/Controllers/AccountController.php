@@ -16,7 +16,7 @@ class AccountController extends Controller
 
     public function __construct()
     {
-        // $this->middleware('auth:api', ['except' => ['login']]);
+
     }
     /**
      * Show the form for creating a new resource.
@@ -25,6 +25,15 @@ class AccountController extends Controller
      */
     public function create()
     {
+        //check login
+        if(!$this->checkauthen()) {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+    
+            return response()->json($data);
+            exit;
+        }
+
         //reset data Account table
          // get all current item and add to log
          $accounts = Account::all();
@@ -50,7 +59,7 @@ class AccountController extends Controller
                 'phone' => $value['phone'],
                 'email' => $value['email'],
                 'username' => $value['username'],
-                'password' => $value['password'],
+                'password' => Hash::make($value['password']),
                 'company'=>$value['company'],
                 'nationality'=>$value['nationality']
             );
@@ -72,6 +81,15 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
+        //check login
+        if(!$this->checkauthen()) {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+    
+            return response()->json($data);
+            exit;
+        }
+
         $dup_email = DB::table('accounts')->where('email', '=', $request->email)->count();
         $dup_username = DB::table('accounts')->where('username','=', $request->username)->count();
 
@@ -125,6 +143,15 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
+        //check login
+        if(!$this->checkauthen()) {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+    
+            return response()->json($data);
+            exit;
+        }
+
         $filter = request('filter', '');
         $page = request('page', 0);
         $skip = $page*10;
@@ -171,7 +198,16 @@ class AccountController extends Controller
      */
     public function edit($id)
     {
-        //
+        //check login
+        if(!$this->checkauthen()) {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+    
+            return response()->json($data);
+            exit;
+        }
+
+        //get data from id for edit page
         $decode_id = str_replace("dgtei","",base64_decode($id));
         $account = Account::find($decode_id);
         $account->enc_id = base64_encode($account->id."dgtei");
@@ -190,6 +226,16 @@ class AccountController extends Controller
      */
     public function update(Request $request,$id)
     {
+        //check login
+        if(!$this->checkauthen()) {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+    
+            return response()->json($data);
+            exit;
+        }
+
+        //check dupplicate unique data
         $decode_id = str_replace("dgtei","",base64_decode($id));
         $dup_email = DB::table('accounts')->where('email', '=', $request->email)->where('id','!=',$decode_id)->count();
         $dup_username = DB::table('accounts')->where('username','=', $request->username)->where('id','!=',$decode_id)->count();
@@ -212,17 +258,10 @@ class AccountController extends Controller
             exit;
         }
 
+        //check id from request
         if($request->id!=""&&$request->id!=null&&$request->id!="0")
         {
-            $check_password = DB::table('accounts')->whereNull('updated_at')->where('id','=',$decode_id)->count();
-            if($check_password&&$request->password=="")
-            {
-                $data['status'] = 500;
-                $data['message'] = "Please Update Password For Hash Data";
-                $data['account'] = "";
-                return response()->json($data);
-            }
-
+            //set update if has id request
             $updatedata = [
                 'name'=>$request->name,
                 'phone'=>$request->phone,
@@ -256,6 +295,7 @@ class AccountController extends Controller
         }
         else
         {
+            //return error if not has id
             $data['status'] = 500;
             $data['message'] = "No Account Data";
             $data['account'] = "";
@@ -271,6 +311,16 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
+        //check login
+        if(!$this->checkauthen()) {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+    
+            return response()->json($data);
+            exit;
+        }
+
+        //decode id from view
         $decode_id = str_replace("dgtei","",base64_decode($id));
 
         // permanently delete
@@ -285,9 +335,23 @@ class AccountController extends Controller
         return response()->json($data);
     }
 
+    public function login_page(){
+        return view('login');
+    }
+
+    public function accounts_page(){
+        if(!$this->checkauthen()) {
+            return redirect('/login');
+        }
+        else {
+            return view('accounts');
+        }
+        
+    }
+
     public function login(Request $request)
     {
-
+        //set login authen
         $validator = Validator::make(
             $request->all(),
             [
@@ -307,24 +371,57 @@ class AccountController extends Controller
         return $this->respondWithToken($token);
     }
 
+      /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
+    {
+        //check login authen
+        return response()->json(auth()->user());
+    }
+
     public function logout()
     {
+        //set loout authen
+        if($this->checkauthen()){
+            auth()->logout();
 
-        auth()->logout();
+            $data['status'] = 200;
+            $data['message'] = "Successfully logged out";
+    
+            return response()->json($data);
+        }
+        else{
+            $data['status'] = 200;
+            $data['message'] = "No Login Information";
+    
+            return response()->json($data);
+        }
+    }
 
-        $data['status'] = 200;
-        $data['message'] = "Successfully logged out";
-
-        return response()->json($data);
+    private function checkauthen()
+    {
+        //check authen
+        if(!auth()->user())
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     protected function respondWithToken($token)
     {
-      return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => auth()->factory()->getTTL() * 60
-      ]);
+        //return token
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
     
 

@@ -17,11 +17,11 @@ Route::get('/', function () {
     return view('menu');
 });
 
-Route::get('/accounts', function () {
-    return view('accounts');
-});
+Route::get('/accounts', [App\Http\Controllers\AccountController::class,'accounts_page'])->name('accounts_page');
+
+
 Route::post('/accounts/update', [App\Http\Controllers\AccountController::class,'store'])->name('updateUser');
-Route::post('/accounts/login', [App\Http\Controllers\AccountController::class,'login'])->name('login');
+Route::get('/login', [App\Http\Controllers\AccountController::class,'login_page'])->name('login_page');
 
 Route::get('/random', function () {
     return view('random');
