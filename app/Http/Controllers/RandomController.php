@@ -113,6 +113,7 @@ class RandomController extends Controller
             }
         }
  
+        sleep(0.5);
 
         //random item 100 times from 0-99
         $itemreturn = array();
