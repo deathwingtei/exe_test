@@ -10,6 +10,36 @@ use Illuminate\Support\Facades\Hash;
 
 class RandomController extends Controller
 {
+
+    public function show()
+    {
+        // get all current item and add to log
+        $items = ItemData::all();
+
+        //log access
+        $log = new LogData;
+        $log->log = "";
+        $log->table = "";
+        $log->commend = "Access Log Page";
+        $log->save();
+
+        $path = base_path().'/resources/data/item.json';
+        if($jsondata = file_get_contents($path))
+        {
+            $jsondata = json_decode($jsondata,true);
+            $data['status'] = 201;
+            $data['message'] = "Insert Complete";
+            $data['return'] = $jsondata;
+            
+        }
+        else{
+            $data['status'] = 500;
+            $data['message'] = "Internal Error";
+            $data['return'] = "";
+        }
+        return response()->json($data);
+    }
+    
     //reset item
     public function create()
     {

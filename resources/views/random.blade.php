@@ -36,6 +36,30 @@
 
     });
 
+    function showitem()
+    {
+        let show_stock_div = document.querySelector("#show_stock");
+        //get item from controller and refresh DB
+        let url = 'api/items/show';
+        fetch(url, {
+            method: "GET"
+        })
+        .then(response => response.json()) 
+        .then(data => {
+            if(data.status==201)
+            {
+                //fetch item from api
+                show_stock_div.innerHTML = "<h2>Percent Item</h2>";
+                data.return.forEach(function(item){
+                    show_stock_div.innerHTML += "<div class='col-12'>"+item.name+" || Chance : "+(item.chance*100)+"% || Stock : "+(item.stock)+"</div>";
+                });
+            }
+            else
+            {
+                alert(data.message);
+            }
+        });
+    }
 
     function resetitem()
     {

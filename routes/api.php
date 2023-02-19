@@ -38,6 +38,7 @@ Route::delete('/account/{id}', [App\Http\Controllers\AccountController::class, '
 Route::get('/accounts/reset', [App\Http\Controllers\AccountController::class, 'create']);
 
 // Reset List Item In DB
+Route::get('/items/show', [App\Http\Controllers\RandomController::class, 'show']);
 Route::get('/items', [App\Http\Controllers\RandomController::class, 'create']);
 // random item 100 times and return data
 Route::get('/random100timesitems', [App\Http\Controllers\RandomController::class, 'randomht']);
