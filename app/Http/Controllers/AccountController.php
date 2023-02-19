@@ -375,7 +375,7 @@ class AccountController extends Controller
             $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update But Try To Change Username By ID ".$thisiuser['id']);
 
             $data['status'] = 500;
-            $data['message'] = "Username Can Not bef Change";
+            $data['message'] = "Username Can Not be Change";
             $data['account'] = "";
             return response()->json($data);
             exit;
