@@ -181,6 +181,27 @@ class AccountController extends Controller
         $dup_username = DB::table('accounts')->where('username','=', $request->username)->count();
 
 
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required',
+                'username' => 'required',
+                'password' => 'required',
+                'email' => 'required|email',
+                'phone' => 'required',
+                'company' => 'required',
+                'nationality' => 'required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            //update log
+            $this->update_log("","",request()->ip()." Insert Failed");
+            $data['status'] = 400;
+            $data['message'] = $validator->errors();
+            return response()->json($data);
+        }
+
         $account = new Account;
         $account->name = $request->name;
         $account->phone = $request->phone;
@@ -321,6 +342,25 @@ class AccountController extends Controller
             exit;
         }
 
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required',
+                'username' => 'required',
+                'email' => 'required|email',
+                'phone' => 'required',
+                'company' => 'required',
+                'nationality' => 'required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            //update log
+            $this->update_log("","",request()->ip()." Insert Failed");
+            $data['status'] = 400;
+            $data['message'] = $validator->errors();
+            return response()->json($data);
+        }
   
         //check dupplicate unique data
         // $decode_id = str_replace("dgtei","",base64_decode($id));
