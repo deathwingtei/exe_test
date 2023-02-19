@@ -356,7 +356,7 @@ class AccountController extends Controller
 
         if ($validator->fails()) {
             //update log
-            $this->update_log("","",request()->ip()." Insert Failed");
+            $this->update_log("","",request()->ip()." Update Failed");
             $data['status'] = 400;
             $data['message'] = $validator->errors();
             return response()->json($data);
@@ -367,9 +367,19 @@ class AccountController extends Controller
         $decode_id = $id;
         $dup_email = DB::table('accounts')->where('email', '=', $request->email)->where('id','!=',$decode_id)->count();
         $dup_username = DB::table('accounts')->where('username','=', $request->username)->where('id','!=',$decode_id)->count();
-
         
         $account = Account::find($decode_id);
+
+        if($account->username!=$request->username)
+        {
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update But Try To Change Username By ID ".$thisiuser['id']);
+
+            $data['status'] = 500;
+            $data['message'] = "Username Can Not bef Change";
+            $data['account'] = "";
+            return response()->json($data);
+            exit;
+        }
 
         if($dup_email)
         {
