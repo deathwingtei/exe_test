@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 15, 2023 at 05:51 AM
--- Server version: 5.7.39
+-- Generation Time: Feb 19, 2023 at 02:52 PM
+-- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `testexe`
+-- Database: `exe_test`
 --
 
 -- --------------------------------------------------------
@@ -28,16 +28,13 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `log_data` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `log` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `table` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `commend` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_date` datetime NOT NULL
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Indexes for dumped tables
---
 
 --
 -- Indexes for table `log_data`
@@ -53,7 +50,7 @@ ALTER TABLE `log_data`
 -- AUTO_INCREMENT for table `log_data`
 --
 ALTER TABLE `log_data`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
