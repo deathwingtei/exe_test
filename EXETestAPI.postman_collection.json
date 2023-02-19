@@ -1,0 +1,349 @@
+{
+	"info": {
+		"_postman_id": "7f9eeaa1-6aa5-4225-8954-d0d89b4be100",
+		"name": "EXE Test API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "439905"
+	},
+	"item": [
+		{
+			"name": "LOGIN API",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "Aimee",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "hPbID53PBJ8Yl",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/auth/login",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3QucGh1a2V0ZGV2ZWxvcGVyLmNvbS9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTY3NjgyNTg0NywiZXhwIjoxNjc2OTEyMjQ3LCJuYmYiOjE2NzY4MjU4NDcsImp0aSI6IlVtNWVJVVNxU2dxclNkQ1QiLCJzdWIiOiIxIiwicHJ2IjoiYzhlZTFmYzg5ZTc3NWVjNGM3Mzg2NjdlNWJlMTdhNTkwYjZkNDBmYyJ9.VvzQImTe7leYEAhrocxi6JrW6gHa7k-i_0dIoXuXbLc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/auth/logout",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ME",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3QucGh1a2V0ZGV2ZWxvcGVyLmNvbS9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTY3NjgyNTg0NywiZXhwIjoxNjc2OTEyMjQ3LCJuYmYiOjE2NzY4MjU4NDcsImp0aSI6IlVtNWVJVVNxU2dxclNkQ1QiLCJzdWIiOiIxIiwicHJ2IjoiYzhlZTFmYzg5ZTc3NWVjNGM3Mzg2NjdlNWJlMTdhNTkwYjZkNDBmYyJ9.VvzQImTe7leYEAhrocxi6JrW6gHa7k-i_0dIoXuXbLc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/auth/me",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"auth",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "INSERT API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3QucGh1a2V0ZGV2ZWxvcGVyLmNvbS9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTY3NjgyNTg0NywiZXhwIjoxNjc2OTEyMjQ3LCJuYmYiOjE2NzY4MjU4NDcsImp0aSI6IlVtNWVJVVNxU2dxclNkQ1QiLCJzdWIiOiIxIiwicHJ2IjoiYzhlZTFmYzg5ZTc3NWVjNGM3Mzg2NjdlNWJlMTdhNTkwYjZkNDBmYyJ9.VvzQImTe7leYEAhrocxi6JrW6gHa7k-i_0dIoXuXbLc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "test0",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "test0@test.com",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "company",
+							"value": "tset",
+							"type": "text"
+						},
+						{
+							"key": "nationality",
+							"value": "tset",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/account",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3QucGh1a2V0ZGV2ZWxvcGVyLmNvbS9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTY3NjgyNTg0NywiZXhwIjoxNjc2OTEyMjQ3LCJuYmYiOjE2NzY4MjU4NDcsImp0aSI6IlVtNWVJVVNxU2dxclNkQ1QiLCJzdWIiOiIxIiwicHJ2IjoiYzhlZTFmYzg5ZTc3NWVjNGM3Mzg2NjdlNWJlMTdhNTkwYjZkNDBmYyJ9.VvzQImTe7leYEAhrocxi6JrW6gHa7k-i_0dIoXuXbLc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Nero Woodard",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "Aphrodite",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "eu@outlook.ca",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "1-756-145-6998",
+							"type": "text"
+						},
+						{
+							"key": "company",
+							"value": "Vestibulum Foundation",
+							"type": "text"
+						},
+						{
+							"key": "nationality",
+							"value": "Germany",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/account",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Data API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3QucGh1a2V0ZGV2ZWxvcGVyLmNvbS9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTY3NjgyNTg0NywiZXhwIjoxNjc2OTEyMjQ3LCJuYmYiOjE2NzY4MjU4NDcsImp0aSI6IlVtNWVJVVNxU2dxclNkQ1QiLCJzdWIiOiIxIiwicHJ2IjoiYzhlZTFmYzg5ZTc3NWVjNGM3Mzg2NjdlNWJlMTdhNTkwYjZkNDBmYyJ9.VvzQImTe7leYEAhrocxi6JrW6gHa7k-i_0dIoXuXbLc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/accounts",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Single Account API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3QucGh1a2V0ZGV2ZWxvcGVyLmNvbS9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTY3NjgyNTg0NywiZXhwIjoxNjc2OTEyMjQ3LCJuYmYiOjE2NzY4MjU4NDcsImp0aSI6IlVtNWVJVVNxU2dxclNkQ1QiLCJzdWIiOiIxIiwicHJ2IjoiYzhlZTFmYzg5ZTc3NWVjNGM3Mzg2NjdlNWJlMTdhNTkwYjZkNDBmYyJ9.VvzQImTe7leYEAhrocxi6JrW6gHa7k-i_0dIoXuXbLc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/account/1",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"account",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE API",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3QucGh1a2V0ZGV2ZWxvcGVyLmNvbS9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTY3NjgyNTg0NywiZXhwIjoxNjc2OTEyMjQ3LCJuYmYiOjE2NzY4MjU4NDcsImp0aSI6IlVtNWVJVVNxU2dxclNkQ1QiLCJzdWIiOiIxIiwicHJ2IjoiYzhlZTFmYzg5ZTc3NWVjNGM3Mzg2NjdlNWJlMTdhNTkwYjZkNDBmYyJ9.VvzQImTe7leYEAhrocxi6JrW6gHa7k-i_0dIoXuXbLc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://test.phuketdeveloper.com/api/account/22",
+					"protocol": "https",
+					"host": [
+						"test",
+						"phuketdeveloper",
+						"com"
+					],
+					"path": [
+						"api",
+						"account",
+						"22"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

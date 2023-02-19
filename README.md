@@ -46,4 +46,4 @@ API Description
 
 7. Me Api : METHOD post -> /api/auth/me ->  require bearer access_token
 
-Example File In postman can download and import to postman file
+Example File In postman can download and import to postman file EXETestAPI.postman_collection.json on root
