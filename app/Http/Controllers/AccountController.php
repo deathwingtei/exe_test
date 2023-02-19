@@ -265,12 +265,25 @@ class AccountController extends Controller
         }
 
         //get data from id for edit page
-        $decode_id = str_replace("dgtei","",base64_decode($id));
-        $account = Account::find($decode_id);
-        $account->enc_id = base64_encode($account->id."dgtei");
+        // $decode_id = str_replace("dgtei","",base64_decode($id));
+        // $account = Account::find($decode_id);
+        // $account->enc_id = base64_encode($account->id."dgtei");
+        if(!$account = Account::find($id))
+        {
+            $data['status'] = 500;
+            $data['message'] = "No Account find";
+            //update log
+            $this->update_log(json_encode("","","No Account find By ID ".$thisiuser['id']));
+            return response()->json($data);
+            exit;
+        }
+        else
+        {
+            //update log
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Get Account By ID ".$thisiuser['id']);
+        }
 
-        //update log
-        $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Get Account By ID ".$thisiuser['id']);
+
         
 
         $data['status'] = 200;
@@ -310,7 +323,8 @@ class AccountController extends Controller
 
   
         //check dupplicate unique data
-        $decode_id = str_replace("dgtei","",base64_decode($id));
+        // $decode_id = str_replace("dgtei","",base64_decode($id));
+        $decode_id = $id;
         $dup_email = DB::table('accounts')->where('email', '=', $request->email)->where('id','!=',$decode_id)->count();
         $dup_username = DB::table('accounts')->where('username','=', $request->username)->where('id','!=',$decode_id)->count();
 

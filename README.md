@@ -30,16 +30,20 @@ run php artisan serve for watch result
 
 API Description
 
-1. Insert API 
+1. Insert API : METHOD post -> /api/account ->  require bearer access_token -> $_POST data must send encrypt id and data to insert
 
-2. Update API 
+2. Update API : METHOD post -> /account/{id} ->  require bearer access_token -> $_POST data must send encrypt id and data to update
 
-3. Delete API
+3. Delete API : METHOD delete -> /account/{id} ->  require bearer access_token -> $_POST data must send encrypt id
 
-4. List Data API
+4. List Data API : METHOD get -> /api/accounts ->  require bearer access_token -> $_GET data can send [page] and [filter]
 
-5. Login API 
+5. Single Account API : METHOD get -> /account/{id} ->  require bearer access_token -> $_POST data must send encrypt id and data to insert
 
-6. Logout API
+5. Login API : METHOD post -> /api/auth/login -> require username and password
 
-7. Me Api
+6. Logout API : METHOD post -> /api/auth/logout ->  require bearer access_token
+
+7. Me Api : METHOD post -> /api/auth/me ->  require bearer access_token
+
+Example File In postman can download and import to postman file
