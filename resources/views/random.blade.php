@@ -32,11 +32,11 @@
     let posrandom = [];
 
     document.addEventListener("DOMContentLoaded", () => {
-        // resetitem();
+        showitem_json();
 
     });
 
-    function showitem()
+    function showitem_json()
     {
         let show_stock_div = document.querySelector("#show_stock");
         //get item from controller and refresh DB
