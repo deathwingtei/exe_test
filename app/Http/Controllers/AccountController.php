@@ -518,6 +518,36 @@ class AccountController extends Controller
         }
     }
 
+    public function log_page(){
+        if(!$this->checkauthen()) {
+            //update log
+            $this->update_log("","",request()->ip()." No Authen Access Log Page");
+
+            return redirect('/login');
+        }
+        else {
+            if($this->getuser()!=null){
+                $thisiuser = $this->getuser();
+
+                //update log
+                $this->update_log("","","ID ".$thisiuser['id']." Access Log Page");
+
+            }else{
+                $data['status'] = 500;
+                $data['message'] = "Token Expire";
+
+                //update log
+                $this->update_log("","",request()->ip()." Access Log Page Token Expire");
+
+                return redirect('/login');
+                exit;
+            }
+            $logs = LogData::orderBy('id', 'desc')->paginate(10);
+            return view('logs')->with("logs",$logs);
+        }
+    }
+    
+
     //auth section
 
     public function login(Request $request)
@@ -566,14 +596,14 @@ class AccountController extends Controller
             if(auth()->user()) {
                 $data['status'] = 200;
                 $data['message'] = auth()->user();
-                $this->update_log("","",request()->ip()." Check Login ".json_encode(auth()->user()));
+                $this->update_log("","",request()->ip()." Check Login ".json_encode(auth()->user()->id));
                 return response()->json($data);
             }else{
                 $token = Session::get('bearer');
                 $user = JWTAuth::setToken($token)->toUser();
                 $data['status'] = 200;
                 $data['message'] =  $user;
-                $this->update_log("","",request()->ip()." Check Login ".json_encode($user));
+                $this->update_log("","",request()->ip()." Check Login ".json_encode($user->id));
                 return response()->json($data);
             } 
         }else{

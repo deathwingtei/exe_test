@@ -28,6 +28,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/random">Random</a>
                     </li>
+                    @if(Session::get('bearer'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="/log_data">Log</a>
+                    </li>
+                    @endif
                 </ul>
             </div>
         </div>

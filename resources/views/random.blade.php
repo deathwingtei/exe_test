@@ -32,7 +32,7 @@
     let posrandom = [];
 
     document.addEventListener("DOMContentLoaded", () => {
-        resetitem();
+        // resetitem();
 
     });
 

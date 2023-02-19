@@ -18,8 +18,8 @@ Route::get('/', function () {
 });
 Route::group(['middleware' => ['web']], function () {
     Route::get('/accounts', [App\Http\Controllers\AccountController::class,'accounts_page'])->name('accounts_page');
-    Route::post('/accounts/update', [App\Http\Controllers\AccountController::class,'store'])->name('updateUser');
     Route::get('/login', [App\Http\Controllers\AccountController::class,'login_page'])->name('login_page');
+    Route::get('/log_data', [App\Http\Controllers\AccountController::class,'log_page'])->name('log_page');
 });
 Route::get('/random', function () {
     return view('random');
