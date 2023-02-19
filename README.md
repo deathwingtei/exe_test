@@ -39,3 +39,7 @@ API Description
 4. List Data API
 
 5. Login API 
+
+6. Logout API
+
+7. Me Api

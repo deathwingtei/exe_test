@@ -5,6 +5,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button class="btn btn-info" id="logout">Logout</button>
+                    <button class="btn btn-info" id="me">me</button>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-header">Input Data <span style="float:right;" ><button class="btn btn-info" id="resetdata">Resetdata</button></span></div>
                 <div class="card-body">
@@ -234,11 +240,18 @@
     function fetchdata()
     {
         document.querySelector("#showdata").innerHTML = "";
+        const token = document.querySelector("#bearer").value;
+
         let filter = document.querySelector("#filter").value;
         let page = document.querySelector("#searchpage").value;
         let url = 'api/accounts?filter='+filter+"&page="+page;
         fetch(url, {
-            method: "GET"
+            method: "GET",
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+token
+            },
         })
         .then(response => response.json()) 
         .then(data => {
@@ -280,9 +293,71 @@
             
             console.log(data.message);
             console.log("reset complete");
-            fetchdata();
+            alert("Login Again");
+            window.location.href = "login"
         });
         
+    });
+
+    document.querySelector('#me').addEventListener('click', (event) => {
+        let url = 'api/auth/me';
+        const token = document.querySelector("#bearer").value;
+
+        fetch(url, {
+            method: "POST",
+            mode: 'no-cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+token
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        })
+        .then(response => response.json()) 
+        .then(data => {
+            if(data.status==200)
+            {
+                alert("Hello "+data.message.name);
+            }
+            else
+            {
+                alert(data.message);
+            }
+        });
+    });
+
+
+    document.querySelector('#logout').addEventListener('click', (event) => {
+        if (!window.confirm("Do you really want to leave?")) {
+            return false;
+        }
+        let url = 'api/auth/logout';
+        const token = document.querySelector("#bearer").value;
+        fetch(url, {
+            method: "POST",
+            mode: 'no-cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+token
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        })
+        .then(response => response.json()) 
+        .then(data => {
+            if(data.status==200)
+            {
+                window.location.href = "login"
+            }
+            else
+            {
+                alert(data.message);
+            }
+        });
     });
 
     document.querySelector('#add_edit_account').addEventListener('submit', (event) => {
@@ -360,6 +435,7 @@
             
             formdata.append('password', password);
 
+            const token = document.querySelector("#bearer").value;
             let url = 'api/account';
             fetch(url, {
                 method: "POST",
@@ -367,8 +443,11 @@
                 mode: 'no-cors', // no-cors, *cors, same-origin
                 cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+token,
                     "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
                 redirect: 'follow', // manual, *follow, error
                 referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -400,14 +479,19 @@
                 formdata.append('password', password);
             }
 
+            const token = document.querySelector("#bearer").value;
             let url = 'api/account/'+id;
             fetch(url, {
-                method: "post",
+                method: "POST",
                 body: formdata,
+                mode: 'no-cors', // no-cors, *cors, same-origin
                 cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
                 headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+token,
                     "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
                 redirect: 'follow', // manual, *follow, error
                 referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -438,14 +522,17 @@
                 event.preventDefault();
                 const thisid = li.getAttribute("data-id");
                
+                const token = document.querySelector("#bearer").value;
                 let url = 'api/account/'+thisid;
                 fetch(url, {
                     method: "GET",
                     headers: {
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer '+token
                     },
                 })
+
                 .then(response => response.json()) 
                 .then(data => {
                     if(data.status==200)
@@ -475,12 +562,15 @@
                 if (confirm("Are you sure?")) {
                     const thisid = li.getAttribute("data-id");
                 
+                    const token = document.querySelector("#bearer").value;
+                    
                     let url = 'api/account/'+thisid;
                     fetch(url, {
                         method: "DELETE",
                         headers: {
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'Accept': 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer '+token
                         },
                     })
                     .then(response => response.json()) 

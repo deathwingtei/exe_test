@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Session;
 use Auth;
+use JWTAuth;
+use Illuminate\Http\Request;
 use App\Models\Account;
 use App\Models\LogData;
 use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -19,123 +20,7 @@ class AccountController extends Controller
     {
 
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //check login
-        // if(!$this->checkauthen()) {
-        //     $data['status'] = 203;
-        //     $data['message'] = "No Login Information";
     
-        //     return response()->json($data);
-        //     exit;
-        // }
-
-        //reset data Account table
-         // get all current item and add to log
-         $accounts = Account::all();
-
-         //log access
-         $log = new LogData;
-         $log->log = json_encode($accounts,JSON_UNESCAPED_UNICODE);
-         $log->table = "accounts";
-         $log->commend = "Log Before truncate";
-         $log->save();
- 
-         //truncate table
-         DB::table('accounts')->truncate();
- 
-         // get resource from json starter data and add to DB
-         $savecount = 0;
-         $path = base_path().'/resources/data/data.json';
-         $jsondata = file_get_contents($path);
-         $jsondata = json_decode($jsondata,true);
-         foreach ($jsondata as $key => $value) {
-            $data = array(
-                'name' => $value['name'],
-                'phone' => $value['phone'],
-                'email' => $value['email'],
-                'username' => $value['username'],
-                'password' => Hash::make($value['password']),
-                'company'=>$value['company'],
-                'nationality'=>$value['nationality']
-            );
-            DB::table('accounts')->insert($data);
-         }
-
-        $data['status'] = 201;
-        $data['message'] = "Data Reset";
-        $data['return'] = $jsondata;
-
-         return response()->json($data);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //check login
-        if(!$this->checkauthen()) {
-            $data['status'] = 203;
-            $data['message'] = "No Login Information";
-    
-            return response()->json($data);
-            exit;
-        }
-
-        $dup_email = DB::table('accounts')->where('email', '=', $request->email)->count();
-        $dup_username = DB::table('accounts')->where('username','=', $request->username)->count();
-
-        if($dup_email)
-        {
-            $data['status'] = 500;
-            $data['message'] = "Email Dupplicate";
-            $data['account'] = "";
-            return response()->json($data);
-            exit;
-        }
-
-        if($dup_username)
-        {
-            $data['status'] = 500;
-            $data['message'] = "Username Dupplicate";
-            $data['account'] = "";
-            return response()->json($data);
-            exit;
-        }
-
-        $account = new Account;
-        $account->name = $request->name;
-        $account->phone = $request->phone;
-        $account->email = $request->email;
-        $account->username = $request->username;
-        $account->password = Hash::make($request->password);
-        $account->company = $request->company;
-        $account->nationality = $request->nationality;
-
-        if($account->save())
-        {
-            $data['status'] = 201;
-            $data['message'] = "Insert Complete";
-            $data['account'] = $account;
-        }
-        else
-        {
-            $data['status'] = 500;
-            $data['message'] = "Insert Incomplete";
-            $data['account'] = "";
-        }
-        return response()->json($data);
-    }
-
     /**
      * Display the specified resource.
      *
@@ -149,9 +34,21 @@ class AccountController extends Controller
             $data['status'] = 203;
             $data['message'] = "No Login Information";
     
+            $this->no_login_log("show()");
+
             return response()->json($data);
             exit;
         }
+
+        if($this->getuser()!=null){
+            $thisiuser = $this->getuser();
+        }else{
+            $data['status'] = 500;
+            $data['message'] = "Token Expire";
+            return response()->json($data);
+            exit;
+        }
+        
 
         $filter = request('filter', '');
         $page = request('page', 0);
@@ -181,6 +78,14 @@ class AccountController extends Controller
 
         $max_page = (sizeof($accounts));
 
+        //update log
+        $log = new LogData;
+        $log->log = json_encode($accounts,JSON_UNESCAPED_UNICODE);
+        $log->table = "accounts";
+        $log->commend = "Get all account from id ".$thisiuser['id']." By Query Filter ".$filter." And Page ".$page;
+        $log->save();
+
+
         $data['status'] = 200;
         $data['message'] = "Get Accounts Complete";
         $data['accounts'] = $accounts;
@@ -190,6 +95,163 @@ class AccountController extends Controller
         $data['filter'] = $filter;
         return response()->json($data);
     }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //check login
+        // if(!$this->checkauthen()) {
+        //     $data['status'] = 203;
+        //     $data['message'] = "No Login Information";
+    
+        //     return response()->json($data);
+        //     exit;
+        // }
+
+        //reset data Account table
+         // get all current item and add to log
+         $accounts = Account::all();
+
+         //log access
+         $log = new LogData;
+         $log->log = json_encode($accounts,JSON_UNESCAPED_UNICODE);
+         $log->table = "accounts";
+         $log->commend = "Log Before truncate in function create";
+         $log->save();
+ 
+         //truncate table
+         DB::table('accounts')->truncate();
+ 
+         // get resource from json starter data and add to DB
+         $savecount = 0;
+         $path = base_path().'/resources/data/data.json';
+         $jsondata = file_get_contents($path);
+         $jsondata = json_decode($jsondata,true);
+        foreach ($jsondata as $key => $value) {
+            $data = array(
+                'name' => $value['name'],
+                'phone' => $value['phone'],
+                'email' => $value['email'],
+                'username' => $value['username'],
+                'password' => Hash::make($value['password']),
+                'company'=>$value['company'],
+                'nationality'=>$value['nationality']
+            );
+            DB::table('accounts')->insert($data);
+        }
+
+        Session::flush();
+
+        $data['status'] = 201;
+        $data['message'] = "Data Reset";
+        $data['return'] = $jsondata;
+
+         return response()->json($data);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //check login
+        if(!$this->checkauthen()) {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+
+            $this->no_login_log("store()");
+    
+            return response()->json($data);
+            exit;
+        }
+
+        if($this->getuser()!=null){
+            $thisiuser = $this->getuser();
+        }else{
+            $data['status'] = 500;
+            $data['message'] = "Token Expire";
+            return response()->json($data);
+            exit;
+        }
+
+        $dup_email = DB::table('accounts')->where('email', '=', $request->email)->count();
+        $dup_username = DB::table('accounts')->where('username','=', $request->username)->count();
+
+
+        $account = new Account;
+        $account->name = $request->name;
+        $account->phone = $request->phone;
+        $account->email = $request->email;
+        $account->username = $request->username;
+        $account->password = Hash::make($request->password);
+        $account->company = $request->company;
+        $account->nationality = $request->nationality;
+
+        if($dup_email)
+        {
+            $log = new LogData;
+            $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
+            $log->table = "accounts";
+            $log->commend = "Insert New Account But Dupplicate Email By ID ".$thisiuser['id'];
+            $log->save();
+
+            $data['status'] = 500;
+            $data['message'] = "Email Dupplicate";
+            $data['account'] = "";
+            return response()->json($data);
+            exit;
+        }
+
+        if($dup_username)
+        {
+            $log = new LogData;
+            $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
+            $log->table = "accounts";
+            $log->commend = "Insert New Account But Dupplicate Username By ID ".$thisiuser['id'];
+            $log->save();
+
+            $data['status'] = 500;
+            $data['message'] = "Username Dupplicate";
+            $data['account'] = "";
+            return response()->json($data);
+            exit;
+        }
+
+        if($account->save())
+        {
+            $data['status'] = 201;
+            $data['message'] = "Insert Complete";
+            $data['account'] = $account;
+
+            //update log
+            $log = new LogData;
+            $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
+            $log->table = "accounts";
+            $log->commend = "Insert New Account By ID ".$thisiuser['id'];
+            $log->save();
+        }
+        else
+        {
+            $data['status'] = 500;
+            $data['message'] = "Insert Incomplete";
+            $data['account'] = "";
+
+            //update log
+            $log = new LogData;
+            $log->log = "";
+            $log->table = "accounts";
+            $log->commend = "Insert New Account By ID ".$thisiuser['id']." UnComplete";
+            $log->save();
+        }
+        return response()->json($data);
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -203,7 +265,18 @@ class AccountController extends Controller
         if(!$this->checkauthen()) {
             $data['status'] = 203;
             $data['message'] = "No Login Information";
+
+            $this->no_login_log("edit()");
     
+            return response()->json($data);
+            exit;
+        }
+
+        if($this->getuser()!=null){
+            $thisiuser = $this->getuser();
+        }else{
+            $data['status'] = 500;
+            $data['message'] = "Token Expire";
             return response()->json($data);
             exit;
         }
@@ -212,6 +285,14 @@ class AccountController extends Controller
         $decode_id = str_replace("dgtei","",base64_decode($id));
         $account = Account::find($decode_id);
         $account->enc_id = base64_encode($account->id."dgtei");
+
+        //update log
+        $log = new LogData;
+        $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
+        $log->table = "accounts";
+        $log->commend = "Get Account By ID ".$thisiuser['id'];
+        $log->save();
+
         $data['status'] = 200;
         $data['message'] = "Get Account Complete";
         $data['account'] = $account;
@@ -231,11 +312,23 @@ class AccountController extends Controller
         if(!$this->checkauthen()) {
             $data['status'] = 203;
             $data['message'] = "No Login Information";
+
+            $this->no_login_log("update()");
     
             return response()->json($data);
             exit;
         }
 
+        if($this->getuser()!=null){
+            $thisiuser = $this->getuser();
+        }else{
+            $data['status'] = 500;
+            $data['message'] = "Token Expire";
+            return response()->json($data);
+            exit;
+        }
+
+  
         //check dupplicate unique data
         $decode_id = str_replace("dgtei","",base64_decode($id));
         $dup_email = DB::table('accounts')->where('email', '=', $request->email)->where('id','!=',$decode_id)->count();
@@ -317,6 +410,17 @@ class AccountController extends Controller
             $data['status'] = 203;
             $data['message'] = "No Login Information";
     
+            $this->no_login_log("destroy()");
+
+            return response()->json($data);
+            exit;
+        }
+
+        if($this->getuser()!=null){
+            $thisiuser = $this->getuser();
+        }else{
+            $data['status'] = 500;
+            $data['message'] = "Token Expire";
             return response()->json($data);
             exit;
         }
@@ -337,13 +441,28 @@ class AccountController extends Controller
     }
 
     public function login_page(Request $request){
-        // print_r(Session::all());
+        if($this->checkauthen()){
+            if($this->getuser()!=null){
+                $thisiuser = $this->getuser();
+            }else{
+                $data['status'] = 500;
+                $data['message'] = "Token Expire";
+                return redirect('/login');
+                exit;
+            }
+            return redirect('/accounts');
+        }
+        else
+        {
+            // print_r(Session::all());
 
-        $path = base_path().'/resources/data/data.json';
-        $jsondata = file_get_contents($path);
-        $jsondata = json_decode($jsondata,true);
+            $path = base_path().'/resources/data/data.json';
+            $jsondata = file_get_contents($path);
+            $jsondata = json_decode($jsondata,true);
 
-        return view('login')->with("datas",$jsondata);
+            return view('login')->with("datas",$jsondata);
+        }
+
     }
 
     public function accounts_page(){
@@ -351,9 +470,16 @@ class AccountController extends Controller
             return redirect('/login');
         }
         else {
+            if($this->getuser()!=null){
+                $thisiuser = $this->getuser();
+            }else{
+                $data['status'] = 500;
+                $data['message'] = "Token Expire";
+                return redirect('/login');
+                exit;
+            }
             return view('accounts');
         }
-        
     }
 
     public function login(Request $request)
@@ -389,14 +515,51 @@ class AccountController extends Controller
     public function me()
     {
         //check login authen
-        return response()->json(auth()->user());
+        if($this->checkauthen()){
+            if(auth()->user()) {
+                $data['status'] = 200;
+                $data['message'] = auth()->user();
+                return response()->json($data);
+            }else{
+                $token = Session::get('bearer');
+                $user = JWTAuth::setToken($token)->toUser();
+                $data['status'] = 200;
+                $data['message'] =  $user;
+                return response()->json($data);
+            } 
+        }else{
+            $data['status'] = 200;
+            $data['message'] = "No Login Information";
+
+            return response()->json($data);
+        }
+
     }
 
     public function logout()
     {
         //set loout authen
         if($this->checkauthen()){
-            auth()->logout();
+            if($this->getuser()!=null){
+                $thisiuser = $this->getuser();
+            }else{
+                $data['status'] = 500;
+                $data['message'] = "Token Expire";
+                return response()->json($data);
+                exit;
+            }
+            
+            if(Session::has('bearer'))
+            {
+                $token = Session::get('bearer');
+                JWTAuth::setToken($token)->toUser();
+                JWTAuth::invalidate(true);
+                Session::flush();
+            }
+            else
+            {
+                auth()->logout();
+            }
 
             $data['status'] = 200;
             $data['message'] = "Successfully logged out";
@@ -411,8 +574,7 @@ class AccountController extends Controller
         }
     }
 
-    public function checkauthen()
-    {
+    private function checkauthen(){
         //check authen
         if(Session::has('bearer'))
         {
@@ -431,8 +593,43 @@ class AccountController extends Controller
         }
     }
 
-    protected function respondWithToken($token)
-    {
+    private function getuser(){
+        if(auth()->user()){
+            $user = auth()->user();
+        }
+        else {
+            if($token = Session::get('bearer')) {
+
+                if(!JWTAuth::setToken($token)->toUser())
+                {
+                    //token expire
+                    $user = null;
+                    Session::flush();
+                }
+                else
+                {
+                    $user = JWTAuth::setToken($token)->toUser();
+                }
+            }else {
+                $user = null;
+                Session::flush();
+            }
+
+        }
+        return $user;
+    }
+
+    private function no_login_log($function = ""){
+        //update log
+        $log = new LogData;
+        $log->log = "";
+        $log->table = "";
+        $log->commend = "Try to use ".$function." function But no login info IP ".request()->ip();
+        $log->save();
+        return true;
+    }
+
+    protected function respondWithToken($token){
         //return token
 
         return response()->json([
