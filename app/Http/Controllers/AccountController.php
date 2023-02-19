@@ -440,7 +440,8 @@ class AccountController extends Controller
         }
 
         //decode id from view
-        $decode_id = str_replace("dgtei","",base64_decode($id));
+        // $decode_id = str_replace("dgtei","",base64_decode($id));
+        $decode_id = $id;
 
         // permanently delete
         // $delete =  DB::table('accounts')->where('id', $decode_id)->delete();
