@@ -682,16 +682,25 @@ class AccountController extends Controller
         }
         else {
             if($token = Session::get('bearer')) {
-
-                if(!JWTAuth::setToken($token)->toUser())
-                {
-                    //token expire
+                JWTAuth::setToken($token);
+                try { 
+                    if (! $claim = JWTAuth::getPayload()) {
+                        $user = null;
+                        Session::flush();
+                    }
+                    else
+                    {
+                        $user = JWTAuth::setToken($token)->toUser();
+                    }
+                } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
                     $user = null;
                     Session::flush();
-                }
-                else
-                {
-                    $user = JWTAuth::setToken($token)->toUser();
+                } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+                    $user = null;
+                    Session::flush();
+                } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+                    $user = null;
+                    Session::flush();
                 }
             }else {
                 $user = null;
@@ -727,7 +736,7 @@ class AccountController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
+            'expires_in' => auth()->factory()->getTTL() * 1440,
             'message' => "Login Complete",
             'status' => 200
         ]);

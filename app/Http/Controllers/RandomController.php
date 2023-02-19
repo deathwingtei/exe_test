@@ -112,6 +112,7 @@ class RandomController extends Controller
                 $random_position++;
             }
         }
+ 
 
         //random item 100 times from 0-99
         $itemreturn = array();
@@ -133,7 +134,7 @@ class RandomController extends Controller
         //return json result to view with api
         if($log->save())
         {
-            $return_data = array("summary" => $itemsummary,"recieve" => $itemreturn,"remaining" => $items_key_game);
+            $return_data = array("summary" => $itemsummary,"recieve" => $itemreturn,"remaining" => $items_key_game,"item_point" => $itemforrandom);
             $data['status'] = 200;
             $data['message'] = "Get Data Complete";
             $data['return'] = $return_data;
