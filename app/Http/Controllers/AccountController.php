@@ -79,13 +79,8 @@ class AccountController extends Controller
         $max_page = (sizeof($accounts));
 
         //update log
-        $log = new LogData;
-        $log->log = json_encode($accounts,JSON_UNESCAPED_UNICODE);
-        $log->table = "accounts";
-        $log->commend = "Get all account from id ".$thisiuser['id']." By Query Filter ".$filter." And Page ".$page;
-        $log->save();
-
-
+        $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Get all account from id ".$thisiuser['id']." By Query Filter ".$filter." And Page ".$page);
+        
         $data['status'] = 200;
         $data['message'] = "Get Accounts Complete";
         $data['accounts'] = $accounts;
@@ -112,24 +107,26 @@ class AccountController extends Controller
         // }
 
         //reset data Account table
-         // get all current item and add to log
-         $accounts = Account::all();
+        // get all current item and add to log
+        $accounts = Account::all();
+        if($this->getuser()!=null){
+            $thisiuser = $this->getuser();
+                  //log access
+            $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Log Before truncate in function create BY ID ".$thisiuser->id);
+        }else{
+            //log access
+            $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Log Before truncate in function create");
+        }
+   
 
-         //log access
-         $log = new LogData;
-         $log->log = json_encode($accounts,JSON_UNESCAPED_UNICODE);
-         $log->table = "accounts";
-         $log->commend = "Log Before truncate in function create";
-         $log->save();
- 
          //truncate table
-         DB::table('accounts')->truncate();
+        DB::table('accounts')->truncate();
  
-         // get resource from json starter data and add to DB
-         $savecount = 0;
-         $path = base_path().'/resources/data/data.json';
-         $jsondata = file_get_contents($path);
-         $jsondata = json_decode($jsondata,true);
+        // get resource from json starter data and add to DB
+        $savecount = 0;
+        $path = base_path().'/resources/data/data.json';
+        $jsondata = file_get_contents($path);
+        $jsondata = json_decode($jsondata,true);
         foreach ($jsondata as $key => $value) {
             $data = array(
                 'name' => $value['name'],
@@ -195,11 +192,8 @@ class AccountController extends Controller
 
         if($dup_email)
         {
-            $log = new LogData;
-            $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
-            $log->table = "accounts";
-            $log->commend = "Insert New Account But Dupplicate Email By ID ".$thisiuser['id'];
-            $log->save();
+
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account But Dupplicate Email By ID ".$thisiuser['id']);
 
             $data['status'] = 500;
             $data['message'] = "Email Dupplicate";
@@ -210,11 +204,8 @@ class AccountController extends Controller
 
         if($dup_username)
         {
-            $log = new LogData;
-            $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
-            $log->table = "accounts";
-            $log->commend = "Insert New Account But Dupplicate Username By ID ".$thisiuser['id'];
-            $log->save();
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account But Dupplicate Username By ID ".$thisiuser['id']);
+           
 
             $data['status'] = 500;
             $data['message'] = "Username Dupplicate";
@@ -230,11 +221,7 @@ class AccountController extends Controller
             $data['account'] = $account;
 
             //update log
-            $log = new LogData;
-            $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
-            $log->table = "accounts";
-            $log->commend = "Insert New Account By ID ".$thisiuser['id'];
-            $log->save();
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account By ID ".$thisiuser['id']);
         }
         else
         {
@@ -242,12 +229,8 @@ class AccountController extends Controller
             $data['message'] = "Insert Incomplete";
             $data['account'] = "";
 
-            //update log
-            $log = new LogData;
-            $log->log = "";
-            $log->table = "accounts";
-            $log->commend = "Insert New Account By ID ".$thisiuser['id']." UnComplete";
-            $log->save();
+            $this->update_log("","accounts","Insert New Account By ID ".$thisiuser['id']." Incomplete");
+            
         }
         return response()->json($data);
     }
@@ -287,11 +270,8 @@ class AccountController extends Controller
         $account->enc_id = base64_encode($account->id."dgtei");
 
         //update log
-        $log = new LogData;
-        $log->log = json_encode($account,JSON_UNESCAPED_UNICODE);
-        $log->table = "accounts";
-        $log->commend = "Get Account By ID ".$thisiuser['id'];
-        $log->save();
+        $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Get Account By ID ".$thisiuser['id']);
+        
 
         $data['status'] = 200;
         $data['message'] = "Get Account Complete";
@@ -334,8 +314,13 @@ class AccountController extends Controller
         $dup_email = DB::table('accounts')->where('email', '=', $request->email)->where('id','!=',$decode_id)->count();
         $dup_username = DB::table('accounts')->where('username','=', $request->username)->where('id','!=',$decode_id)->count();
 
+        
+        $account = Account::find($decode_id);
+
         if($dup_email)
         {
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update But Dupplicate Email By ID ".$thisiuser['id']);
+
             $data['status'] = 500;
             $data['message'] = "Email Dupplicate";
             $data['account'] = "";
@@ -345,12 +330,15 @@ class AccountController extends Controller
 
         if($dup_username)
         {
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update Account But Dupplicate Username By ID ".$thisiuser['id']);
+
             $data['status'] = 500;
             $data['message'] = "Username Dupplicate";
             $data['account'] = "";
             return response()->json($data);
             exit;
         }
+
 
         //check id from request
         if($request->id!=""&&$request->id!=null&&$request->id!="0")
@@ -377,12 +365,20 @@ class AccountController extends Controller
                 $data['status'] = 200;
                 $data['message'] = "User Updated";
                 $data['account'] = $updatedata;
+
+                //update log
+                $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Data Before Update Account By ID ".$thisiuser['id']);
+               
             }
             else
             {
                 $data['status'] = 500;
                 $data['message'] = "Updated Incomplete";
                 $data['account'] = "";
+
+                //update log
+                $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Data Updated Incomplete By ID ".$thisiuser['id']);
+                
             }
 
             return response()->json($data);
@@ -393,6 +389,10 @@ class AccountController extends Controller
             $data['status'] = 500;
             $data['message'] = "No Account Data";
             $data['account'] = "";
+
+            //update log
+            $this->update_log("","accounts","NO ACCOUNT For Update By ID ".$thisiuser['id']);
+            
             return response()->json($data);
         }
     }
@@ -432,29 +432,54 @@ class AccountController extends Controller
         // $delete =  DB::table('accounts')->where('id', $decode_id)->delete();
 
         // soft delete by  Eloquent
-        $delete = Account::find($decode_id)->delete();
-        $data['status'] = 200;
-        $data['message'] = "Account Delete";
-        $data['account'] = $delete;
+        if($account = Account::find($decode_id)){
+            $delete = Account::find($decode_id)->delete();
+            $data['status'] = 200;
+            $data['message'] = "Account Delete";
+            $data['account'] = $delete;
+            //update log
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Delete ACCOUNT By ID ".$thisiuser['id']);
+        }else{
+            //return error if not has id
+            $data['status'] = 500;
+            $data['message'] = "No Account Data";
+            $data['account'] = "";
+
+            //update log
+            $this->update_log("","accounts","NO ACCOUNT For Delete By ID ".$thisiuser['id']);
+        }
 
         return response()->json($data);
     }
+
+    //page section
 
     public function login_page(Request $request){
         if($this->checkauthen()){
             if($this->getuser()!=null){
                 $thisiuser = $this->getuser();
+                //update log
+                $this->update_log("","","ID ".$thisiuser['id']." Access LOGIN Page and has token redirect to account page");
+
+                return redirect('/accounts');
             }else{
-                $data['status'] = 500;
-                $data['message'] = "Token Expire";
-                return redirect('/login');
-                exit;
+                
+                //update log
+                $this->update_log("","",request()->ip()." Access Login Page with Token Expire");
+                
+                $path = base_path().'/resources/data/data.json';
+                $jsondata = file_get_contents($path);
+                $jsondata = json_decode($jsondata,true);
+    
+                return view('login')->with("datas",$jsondata);
             }
-            return redirect('/accounts');
         }
         else
         {
             // print_r(Session::all());
+            
+            //update log
+            $this->update_log("","",request()->ip()." Access Login Page");
 
             $path = base_path().'/resources/data/data.json';
             $jsondata = file_get_contents($path);
@@ -467,20 +492,33 @@ class AccountController extends Controller
 
     public function accounts_page(){
         if(!$this->checkauthen()) {
+            //update log
+            $this->update_log("","",request()->ip()." No Authen Access Account Page");
+
             return redirect('/login');
         }
         else {
             if($this->getuser()!=null){
                 $thisiuser = $this->getuser();
+
+                //update log
+                $this->update_log("","","ID ".$thisiuser['id']." Access Account Page");
+
             }else{
                 $data['status'] = 500;
                 $data['message'] = "Token Expire";
+
+                //update log
+                $this->update_log("","",request()->ip()." Access Account Page Token Expire");
+
                 return redirect('/login');
                 exit;
             }
             return view('accounts');
         }
     }
+
+    //auth section
 
     public function login(Request $request)
     {
@@ -494,14 +532,23 @@ class AccountController extends Controller
         );
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            //update log
+            $this->update_log("","",request()->ip()." Login Failed");
+            $data['status'] = 400;
+            $data['message'] = $validator->errors();
+            return response()->json($data);
         }
         $credentials = request(['username', 'password']);
         if (!$token = auth()->guard('api')->attempt($credentials)) {
             $data['status'] = 401;
             $data['message'] = "Unauthorized / Username Or Password Incorect";
+            //update log
+            $this->update_log("","",request()->ip()." Unauthorized / Username Or Password Incorect");
             return response()->json($data);
         }
+        //update log
+        $this->update_log("","",request()->ip()." Login Complete With Username".$request->username);
+        
         Session::put('bearer', $token);
         Session::save();
         return $this->respondWithToken($token);
@@ -519,18 +566,20 @@ class AccountController extends Controller
             if(auth()->user()) {
                 $data['status'] = 200;
                 $data['message'] = auth()->user();
+                $this->update_log("","",request()->ip()." Check Login ".json_encode(auth()->user()));
                 return response()->json($data);
             }else{
                 $token = Session::get('bearer');
                 $user = JWTAuth::setToken($token)->toUser();
                 $data['status'] = 200;
                 $data['message'] =  $user;
+                $this->update_log("","",request()->ip()." Check Login ".json_encode($user));
                 return response()->json($data);
             } 
         }else{
             $data['status'] = 200;
             $data['message'] = "No Login Information";
-
+            $this->update_log("","",request()->ip()." Try to Check me() But no Information");
             return response()->json($data);
         }
 
@@ -538,13 +587,14 @@ class AccountController extends Controller
 
     public function logout()
     {
-        //set loout authen
+        //set lout authen
         if($this->checkauthen()){
             if($this->getuser()!=null){
                 $thisiuser = $this->getuser();
             }else{
                 $data['status'] = 500;
                 $data['message'] = "Token Expire";
+                $this->update_log("","",request()->ip()." Try to Logout But Token Expire");
                 return response()->json($data);
                 exit;
             }
@@ -561,6 +611,8 @@ class AccountController extends Controller
                 auth()->logout();
             }
 
+            $this->update_log("","",$thisiuser->username." Logout");
+
             $data['status'] = 200;
             $data['message'] = "Successfully logged out";
     
@@ -569,11 +621,12 @@ class AccountController extends Controller
         else{
             $data['status'] = 200;
             $data['message'] = "No Login Information";
-    
+             $this->update_log("","",request()->ip()." Try to Logout But no Information");
             return response()->json($data);
         }
     }
 
+ 
     private function checkauthen(){
         //check authen
         if(Session::has('bearer'))
@@ -625,6 +678,15 @@ class AccountController extends Controller
         $log->log = "";
         $log->table = "";
         $log->commend = "Try to use ".$function." function But no login info IP ".request()->ip();
+        $log->save();
+        return true;
+    }
+
+    private function update_log($log_data = "",$table_data = "",$commend = ""){
+        $log = new LogData;
+        $log->log = $log_data;
+        $log->table = $table_data;
+        $log->commend = $commend;
         $log->save();
         return true;
     }
