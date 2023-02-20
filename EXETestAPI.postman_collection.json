@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7f9eeaa1-6aa5-4225-8954-d0d89b4be100",
+		"_postman_id": "4dc194f9-68aa-49ac-9e7b-a7e143fef4fd",
 		"name": "EXE Test API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "439905"
@@ -235,7 +235,7 @@
 					]
 				},
 				"url": {
-					"raw": "https://test.phuketdeveloper.com/api/account",
+					"raw": "https://test.phuketdeveloper.com/api/account/16",
 					"protocol": "https",
 					"host": [
 						"test",
@@ -244,7 +244,8 @@
 					],
 					"path": [
 						"api",
-						"account"
+						"account",
+						"16"
 					]
 				}
 			},

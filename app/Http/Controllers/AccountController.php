@@ -30,22 +30,10 @@ class AccountController extends Controller
     public function show(Account $account)
     {
         //check login
-        if(!$this->checkauthen()) {
-            $data['status'] = 203;
-            $data['message'] = "No Login Information";
-    
-            $this->no_login_log("show()");
-
-            return response()->json($data);
-            exit;
-        }
-
-        if($this->getuser()!=null){
-            $thisiuser = $this->getuser();
-        }else{
-            $data['status'] = 500;
-            $data['message'] = "Token Expire";
-            return response()->json($data);
+        $thisuser = $this->getauthenuser("show()");
+        if($thisuser['status']!=200)
+        {
+            return response()->json($thisuser);
             exit;
         }
         
@@ -79,7 +67,7 @@ class AccountController extends Controller
         $max_page = (sizeof($accounts));
 
         //update log
-        $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Get all account from id ".$thisiuser['id']." By Query Filter ".$filter." And Page ".$page);
+        $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Get all account from id ".$thisuser['id']." By Query Filter ".$filter." And Page ".$page);
         
         $data['status'] = 200;
         $data['message'] = "Get Accounts Complete";
@@ -97,22 +85,13 @@ class AccountController extends Controller
      */
     public function create()
     {
-        //check login
-        // if(!$this->checkauthen()) {
-        //     $data['status'] = 203;
-        //     $data['message'] = "No Login Information";
-    
-        //     return response()->json($data);
-        //     exit;
-        // }
-
         //reset data Account table
         // get all current item and add to log
         $accounts = Account::all();
         if($this->getuser()!=null){
-            $thisiuser = $this->getuser();
+            $thisuser = $this->getuser();
                   //log access
-            $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Log Before truncate in function create BY ID ".$thisiuser->id);
+            $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Log Before truncate in function create BY ID ".$thisuser->id);
         }else{
             //log access
             $this->update_log(json_encode($accounts,JSON_UNESCAPED_UNICODE),"accounts","Log Before truncate in function create");
@@ -158,22 +137,10 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         //check login
-        if(!$this->checkauthen()) {
-            $data['status'] = 203;
-            $data['message'] = "No Login Information";
-
-            $this->no_login_log("store()");
-    
-            return response()->json($data);
-            exit;
-        }
-
-        if($this->getuser()!=null){
-            $thisiuser = $this->getuser();
-        }else{
-            $data['status'] = 500;
-            $data['message'] = "Token Expire";
-            return response()->json($data);
+        $thisuser = $this->getauthenuser("store()");
+        if($thisuser['status']!=200)
+        {
+            return response()->json($thisuser);
             exit;
         }
 
@@ -214,7 +181,7 @@ class AccountController extends Controller
         if($dup_email)
         {
 
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account But Dupplicate Email By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account But Dupplicate Email By ID ".$thisuser['id']);
 
             $data['status'] = 500;
             $data['message'] = "Email Dupplicate";
@@ -225,7 +192,7 @@ class AccountController extends Controller
 
         if($dup_username)
         {
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account But Dupplicate Username By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account But Dupplicate Username By ID ".$thisuser['id']);
            
 
             $data['status'] = 500;
@@ -242,7 +209,7 @@ class AccountController extends Controller
             $data['account'] = $account;
 
             //update log
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Insert New Account By ID ".$thisuser['id']);
         }
         else
         {
@@ -250,7 +217,7 @@ class AccountController extends Controller
             $data['message'] = "Insert Incomplete";
             $data['account'] = "";
 
-            $this->update_log("","accounts","Insert New Account By ID ".$thisiuser['id']." Incomplete");
+            $this->update_log("","accounts","Insert New Account By ID ".$thisuser['id']." Incomplete");
             
         }
         return response()->json($data);
@@ -266,22 +233,10 @@ class AccountController extends Controller
     public function edit($id)
     {
         //check login
-        if(!$this->checkauthen()) {
-            $data['status'] = 203;
-            $data['message'] = "No Login Information";
-
-            $this->no_login_log("edit()");
-    
-            return response()->json($data);
-            exit;
-        }
-
-        if($this->getuser()!=null){
-            $thisiuser = $this->getuser();
-        }else{
-            $data['status'] = 500;
-            $data['message'] = "Token Expire";
-            return response()->json($data);
+        $thisuser = $this->getauthenuser("edit()");
+        if($thisuser['status']!=200)
+        {
+            return response()->json($thisuser);
             exit;
         }
 
@@ -294,14 +249,14 @@ class AccountController extends Controller
             $data['status'] = 500;
             $data['message'] = "No Account find";
             //update log
-            $this->update_log(json_encode("","","No Account find By ID ".$thisiuser['id']));
+            $this->update_log(json_encode("","","No Account find By ID ".$thisuser['id']));
             return response()->json($data);
             exit;
         }
         else
         {
             //update log
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Get Account By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Get Account By ID ".$thisuser['id']);
         }
 
 
@@ -323,22 +278,10 @@ class AccountController extends Controller
     public function update(Request $request,$id)
     {
         //check login
-        if(!$this->checkauthen()) {
-            $data['status'] = 203;
-            $data['message'] = "No Login Information";
-
-            $this->no_login_log("update()");
-    
-            return response()->json($data);
-            exit;
-        }
-
-        if($this->getuser()!=null){
-            $thisiuser = $this->getuser();
-        }else{
-            $data['status'] = 500;
-            $data['message'] = "Token Expire";
-            return response()->json($data);
+        $thisuser = $this->getauthenuser("update()");
+        if($thisuser['status']!=200)
+        {
+            return response()->json($thisuser);
             exit;
         }
 
@@ -372,7 +315,7 @@ class AccountController extends Controller
 
         if($account->username!=$request->username)
         {
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update But Try To Change Username By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update But Try To Change Username By ID ".$thisuser['id']);
 
             $data['status'] = 500;
             $data['message'] = "Username Can Not be Change";
@@ -383,7 +326,7 @@ class AccountController extends Controller
 
         if($dup_email)
         {
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update But Dupplicate Email By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update But Dupplicate Email By ID ".$thisuser['id']);
 
             $data['status'] = 500;
             $data['message'] = "Email Dupplicate";
@@ -394,7 +337,7 @@ class AccountController extends Controller
 
         if($dup_username)
         {
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update Account But Dupplicate Username By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Update Account But Dupplicate Username By ID ".$thisuser['id']);
 
             $data['status'] = 500;
             $data['message'] = "Username Dupplicate";
@@ -431,7 +374,7 @@ class AccountController extends Controller
                 $data['account'] = $updatedata;
 
                 //update log
-                $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Data Before Update Account By ID ".$thisiuser['id']);
+                $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Data Before Update Account By ID ".$thisuser['id']);
                
             }
             else
@@ -441,7 +384,7 @@ class AccountController extends Controller
                 $data['account'] = "";
 
                 //update log
-                $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Data Updated Incomplete By ID ".$thisiuser['id']);
+                $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Data Updated Incomplete By ID ".$thisuser['id']);
                 
             }
 
@@ -455,7 +398,7 @@ class AccountController extends Controller
             $data['account'] = "";
 
             //update log
-            $this->update_log("","accounts","NO ACCOUNT For Update By ID ".$thisiuser['id']);
+            $this->update_log("","accounts","NO ACCOUNT For Update By ID ".$thisuser['id']);
             
             return response()->json($data);
         }
@@ -470,23 +413,10 @@ class AccountController extends Controller
     public function destroy($id)
     {
         //check login
-        if(!$this->checkauthen()) {
-            $data['status'] = 203;
-            $data['message'] = "No Login Information";
-    
-            $this->no_login_log("destroy()");
-
-            return response()->json($data);
-            exit;
-        }
-
-        if($this->getuser()!=null){
-            $thisiuser = $this->getuser();
-        }else{
-            $data['status'] = 500;
-            $data['message'] = "Token Expire";
-            return response()->json($data);
-            exit;
+        $thisuser = $this->getauthenuser("destroy()");
+        if($thisuser['status']!=200)
+        {
+            return response()->json($thisuser);
         }
 
         //decode id from view
@@ -503,7 +433,7 @@ class AccountController extends Controller
             $data['message'] = "Account Delete";
             $data['account'] = $delete;
             //update log
-            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Delete ACCOUNT By ID ".$thisiuser['id']);
+            $this->update_log(json_encode($account,JSON_UNESCAPED_UNICODE),"accounts","Delete ACCOUNT By ID ".$thisuser['id']);
         }else{
             //return error if not has id
             $data['status'] = 500;
@@ -511,7 +441,7 @@ class AccountController extends Controller
             $data['account'] = "";
 
             //update log
-            $this->update_log("","accounts","NO ACCOUNT For Delete By ID ".$thisiuser['id']);
+            $this->update_log("","accounts","NO ACCOUNT For Delete By ID ".$thisuser['id']);
         }
 
         return response()->json($data);
@@ -522,9 +452,9 @@ class AccountController extends Controller
     public function login_page(Request $request){
         if($this->checkauthen()){
             if($this->getuser()!=null){
-                $thisiuser = $this->getuser();
+                $thisuser = $this->getuser();
                 //update log
-                $this->update_log("","","ID ".$thisiuser['id']." Access LOGIN Page and has token redirect to account page");
+                $this->update_log("","","ID ".$thisuser['id']." Access LOGIN Page and has token redirect to account page");
 
                 return redirect('/accounts');
             }else{
@@ -564,10 +494,10 @@ class AccountController extends Controller
         }
         else {
             if($this->getuser()!=null){
-                $thisiuser = $this->getuser();
+                $thisuser = $this->getuser();
 
                 //update log
-                $this->update_log("","","ID ".$thisiuser['id']." Access Account Page");
+                $this->update_log("","","ID ".$thisuser['id']." Access Account Page");
 
             }else{
                 $data['status'] = 500;
@@ -592,10 +522,10 @@ class AccountController extends Controller
         }
         else {
             if($this->getuser()!=null){
-                $thisiuser = $this->getuser();
+                $thisuser = $this->getuser();
 
                 //update log
-                $this->update_log("","","ID ".$thisiuser['id']." Access Log Page");
+                $this->update_log("","","ID ".$thisuser['id']." Access Log Page");
 
             }else{
                 $data['status'] = 500;
@@ -657,27 +587,18 @@ class AccountController extends Controller
     public function me()
     {
         //check login authen
-        if($this->checkauthen()){
-            if(auth()->user()) {
-                $data['status'] = 200;
-                $data['message'] = auth()->user();
-                $this->update_log("","",request()->ip()." Check Login ".json_encode(auth()->user()->id));
-                return response()->json($data);
-            }else{
-                $token = Session::get('bearer');
-                $user = JWTAuth::setToken($token)->toUser();
-                $data['status'] = 200;
-                $data['message'] =  $user;
-                $this->update_log("","",request()->ip()." Check Login ".json_encode($user->id));
-                return response()->json($data);
-            } 
-        }else{
+        $thisuser = $this->getauthenuser("me()");
+        if($thisuser['status']==200)
+        {
             $data['status'] = 200;
-            $data['message'] = "No Login Information";
-            $this->update_log("","",request()->ip()." Try to Check me() But no Information");
+            $data['message'] =  $thisuser;
+            $this->update_log("","",request()->ip()." Check Login ".json_encode($thisuser->id));
             return response()->json($data);
         }
-
+        else
+        {
+            return response()->json($thisuser);
+        }
     }
 
     public function logout()
@@ -685,7 +606,7 @@ class AccountController extends Controller
         //set lout authen
         if($this->checkauthen()){
             if($this->getuser()!=null){
-                $thisiuser = $this->getuser();
+                $thisuser = $this->getuser();
             }else{
                 $data['status'] = 500;
                 $data['message'] = "Token Expire";
@@ -706,7 +627,7 @@ class AccountController extends Controller
                 auth()->logout();
             }
 
-            $this->update_log("","",$thisiuser->username." Logout");
+            $this->update_log("","",$thisuser->username." Logout");
 
             $data['status'] = 200;
             $data['message'] = "Successfully logged out";
@@ -774,6 +695,31 @@ class AccountController extends Controller
 
         }
         return $user;
+    }
+
+    private function getauthenuser($function = "")
+    {
+        if($this->checkauthen())
+        {
+            if($this->getuser()!=null){
+                $thisuser = $this->getuser();
+                $thisuser['status'] = 200;
+                return $thisuser;
+            }else{
+                $data['status'] = 500;
+                $data['message'] = "Token Expire";
+                return $data;
+            }
+        }
+        else
+        {
+            $data['status'] = 203;
+            $data['message'] = "No Login Information";
+    
+            $this->no_login_log($function);
+
+            return $data;
+        }
     }
 
     private function no_login_log($function = ""){
