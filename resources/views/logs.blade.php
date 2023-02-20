@@ -19,11 +19,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if($logs instanceof \Illuminate\Pagination\firstItem )
-                                    @php($i = $logs->firstItem())
-                                    @else
-                                    @php($i = 1)
-                                    @endif
+                            
+                                    @php($i = $num)
+                                
                                     @foreach($logs as $log)
                                     <tr>
                                         <th scope="row">{{$i}}</th>

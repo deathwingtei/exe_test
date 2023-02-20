@@ -538,7 +538,9 @@ class AccountController extends Controller
                 exit;
             }
             $logs = LogData::orderBy('id', 'desc')->paginate(10);
-            return view('logs')->with("logs",$logs);
+            $num = $logs->firstItem();
+
+            return view('logs')->with("logs",$logs)->with('num', $num);
         }
     }
     
