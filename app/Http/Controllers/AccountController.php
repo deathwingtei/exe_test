@@ -524,8 +524,14 @@ class AccountController extends Controller
             if($this->getuser()!=null){
                 $thisuser = $this->getuser();
 
-                //update log
-                $this->update_log("","","ID ".$thisuser['id']." Access Log Page");
+                $log_count = LogData::select('*')->whereRaw('commend = ? AND (created_at+interval 1 HOUR > ?)', 
+                ["ID ".$thisuser['id']." Access Log Page",now()])->count();
+                if($log_count<=0)
+                {
+                    //update log
+                    $this->update_log("","","ID ".$thisuser['id']." Access Log Page");
+                }
+      
 
             }else{
                 $data['status'] = 500;
